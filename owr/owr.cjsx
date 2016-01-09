@@ -1,4 +1,81 @@
-{ button, div, form, h1, label, option, p, select, } = React.DOM
+d = -> parseInt(Math.random() * 10)
+d19 = -> parseInt(1 + Math.random() * 9)
+
+Duties = [
+  '[Choose 2 but only charge for cheaper one]',
+  'Suck for 5min',
+  'Suck for 10min',
+  'Suck for 5min, deepthroat every 30s',
+  'Deepthroat 20x',
+  'Deepthroat 40x',
+  'Deepthroat 10x in 1min',
+  'Deepthroat 20x in 90s, or deepthroat 100x',
+  'Suck for 5min, then deepthroat 20x',
+  'Suck for 10min, then deepthroat 40x',
+]
+
+Kinks = [
+  '[Pick three]',
+  'Wear nippleclamps',
+  'Wear blindfold',
+  'Wear collar',
+  'Smear everything that comes out of your mouth on your face',
+  'After doing your duty, slap your face with the dildo 30 times',
+  'Spank your ass 50 times',
+  'Moan and beg for more',
+  'Wear nippleclamps & blindfold',
+  'Wear nippleclamps & collar',
+]
+
+Twists = [
+  'Gangbang: X roll is cumulative',
+  null, null, null, null, null,
+  'Cheap escape: do not collect money for this roll', #6
+  'He brings his friend: do double amount of work', #7
+  'His favorite bitch: do triple amount of work, get paid double', #8
+  'Your pimp comes around: give him half of your money', #9
+]
+
+rollCounter = 0
+
+class Roll
+  constructor: () ->
+    @x = d()
+    @y = d()
+    @z = d()
+    @x = @y = @z = 0 if @x == @y and @y == @z
+    @x0 = [d19(), d19()]
+    @y0 = _.first(_.shuffle([1..9]), 3)
+    @key = rollCounter++
+
+  numDuty: ->
+    res = [@x]
+    res.push(@y) if @y == @z
+    res = res.concat(@x0) if _.contains(res, 0)
+    res = [1.._.max(res)] if @z == 0
+    res
+
+  duty: ->
+    duties = _.map(@numDuty(), (x) -> Duties[x])
+    duties = _.map(duties, (duty) -> duty.replace(/(\d+)(min|x)/g, (_, p1, p2) -> "#{+p1 * 2}#{p2}")) if @z == 7
+    duties = _.map(duties, (duty) -> duty.replace(/(\d+)(min|x)/g, (_, p1, p2) -> "#{+p1 * 3}#{p2}")) if @z == 8
+    duties
+
+  numKink: ->
+    res = [@y]
+    res.push(@x) if @x == @z
+    res = res.concat(@y0) if _.contains(res, 0)
+    res
+
+  kink: ->
+    _.map(@numKink(), (y) -> Kinks[y])
+
+  twist: ->
+    res = [@z]
+    res.push(@x) if @x == @y
+    _.compact(_.map(res, (z) -> Twists[z]))
+
+{ button, div, form, h1, label, li, option, p, select, table, tbody, td, th, tr, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -20,13 +97,48 @@ StartSelector = React.createClass
           label({}, 'A ='),
           select className: "form-control", onChange: @handleChange,
             option(value: 0, 'Random'),
-            option(key: x, x) for x in [1..10]), ' '
+            option(key: x, value: x, "#{x} ($#{x}00)") for x in [1..10]), ' '
         button type: "submit", className: "btn btn-primary", 'Start'
 
 Game = React.createClass
+  getInitialState: ->
+    money: 0
+    target: @props.A * 100
+    rolls: []
+
+  createNextTask: (e) ->
+    e.preventDefault()
+    roll = new Roll()
+    @setState(rolls: [roll].concat(@state.rolls))
+
+  listify: (a) ->
+    if a.length > 1
+      ul {}, _.map(a, (el, i) -> li key: i, el)
+    else
+      a[0]
+
   render: ->
     div {},
-      "Target money: $#{@props.A * 100}"
+      div className: 'row',
+        div className: 'col-xs-6', "Your money: $#{@state.money}"
+        div className: 'col-xs-6 text-right', "Target money: $#{@state.target}"
+      div className: 'row',
+        div className: 'col-xs-12',
+          button className: "btn btn-primary btn-lg center-block", onClick: @createNextTask,
+            'Get next task'
+      div className: 'row', style: {marginTop: 20},
+        table className: 'table table-striped',
+          tbody {},
+            tr {},
+              th className: 'col-xs-4', 'Duty'
+              th className: 'col-xs-4', 'Kink'
+              th className: 'col-xs-4', 'Twist'
+            _.map(@state.rolls, (roll, i) =>
+              classes = if 0 == i then className: 'lead' else {}
+              tr key: roll.key,
+                td classes, @listify(roll.duty())
+                td classes, @listify(roll.kink())
+                td classes, @listify(roll.twist()))
 
 
 OWRMain = React.createClass
