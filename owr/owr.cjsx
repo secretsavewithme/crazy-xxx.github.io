@@ -108,7 +108,7 @@ calcMoney = (rolls) ->
   else
     0
 
-{ button, div, form, h1, h3, input, label, li, option, p, select, span, strong, ul } = React.DOM
+{ button, div, form, img, h1, h3, input, label, li, option, p, select, span, strong, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -139,6 +139,7 @@ Game = React.createClass
     target: @props.A * 100
     rolls: []
     debug: false
+    original: false
 
   createNextTask: (e) ->
     e.preventDefault()
@@ -164,6 +165,9 @@ Game = React.createClass
 
   toggleDebug: ->
     @setState debug: not @state.debug
+
+  toggleOriginal: ->
+    @setState original: not @state.original
 
   render: ->
     canGetNext = @state.money < @state.target
@@ -207,9 +211,13 @@ Game = React.createClass
       div className: 'row', style: {marginTop: 40},
         div className: 'col-xs-12 text-right',
           label {},
+            (input type: 'checkbox', checked: @state.original, onChange: @toggleOriginal),
+            ' Show original  '
+          label {},
             (input type: 'checkbox', checked: @state.debug, onChange: @toggleDebug),
             ' Debug'
-
+      @state.original and
+        img className: 'img-responsive', src: 'http://40.media.tumblr.com/3d37deb13a8382de854e2c0ca1715877/tumblr_nuos2gddcs1rw2ehco1_1280.png'
 
 OWRMain = React.createClass
   getInitialState: ->
