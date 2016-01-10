@@ -250,14 +250,17 @@ Game = React.createClass({displayName: "Game",
   finalDecision: function() {
     var can;
     can = this.state.b < this.props.A;
-    return div({
+    return div({}, div({
       className: "panel text-center " + (can ? 'panel-success' : "panel-danger"),
       style: {
         marginTop: 20
       }
     }, h1({
       className: 'panel-heading panel-title'
-    }, "You " + (can ? "can" : "can't") + " cum!"), "Your B is " + this.state.b);
+    }, "You " + (can ? "can" : "can't") + " cum!"), "Your B is " + this.state.b), button({
+      className: "btn btn-primary btn-lg pull-right",
+      onClick: this.props.startAnother
+    }, 'Start another game'));
   },
   toggleDebug: function() {
     return this.setState({
@@ -370,11 +373,18 @@ OWRMain = React.createClass({displayName: "OWRMain",
       A: a
     });
   },
+  startAnother: function() {
+    return this.setState({
+      started: false,
+      A: void 0
+    });
+  },
   render: function() {
     return div({
       className: "container"
     }, h1({}, 'Oral Whore Roulette'), this.state.started ? React.createElement(Game, {
-      "A": this.state.A
+      "A": this.state.A,
+      "startAnother": this.startAnother
     }) : React.createElement(StartSelector, {
       "started": this.startGame
     }));

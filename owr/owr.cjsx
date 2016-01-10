@@ -1,6 +1,6 @@
 # TODO:
 # √ mobile responsive
-# - start new game
+# √ start new game
 # - save defaults
 
 d = -> parseInt(Math.random() * 10)
@@ -159,10 +159,13 @@ Game = React.createClass
 
   finalDecision: ->
     can = @state.b < @props.A
-    div className: "panel text-center #{if can then 'panel-success' else "panel-danger"}", style: {marginTop: 20},
-      h1 {className: 'panel-heading panel-title'},
-        "You #{if can then "can" else "can't"} cum!"
-      "Your B is #{@state.b}"
+    div {},
+      div className: "panel text-center #{if can then 'panel-success' else "panel-danger"}", style: {marginTop: 20},
+        h1 {className: 'panel-heading panel-title'},
+          "You #{if can then "can" else "can't"} cum!"
+        "Your B is #{@state.b}"
+      button className: "btn btn-primary btn-lg pull-right", onClick: @props.startAnother,
+        'Start another game'
 
   toggleDebug: ->
     @setState debug: not @state.debug
@@ -236,9 +239,12 @@ OWRMain = React.createClass
     a ||= parseInt(1 + Math.random() * 10)
     @setState started: true, A: a
 
+  startAnother: ->
+    @setState started: false, A: undefined
+
   render: ->
     div className: "container",
       h1({}, 'Oral Whore Roulette'),
-      if @state.started then <Game A={@state.A} /> else <StartSelector started={@startGame} />
+      if @state.started then <Game A={@state.A} startAnother={@startAnother} /> else <StartSelector started={@startGame} />
 
 ReactDOM.render <OWRMain />, document.getElementById('content')
