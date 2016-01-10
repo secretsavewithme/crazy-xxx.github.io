@@ -125,7 +125,7 @@ StartSelector = React.createClass
   render: ->
     div {},
       p className: "lead",
-        'The game is not started. To start it select a value for A (target amount of money) and press Start.'
+        'The game is not started yet. Select a value for A (target amount of money) and press Start.'
       form className: "form-inline", onSubmit: @handleSubmit,
         div(className: "form-group",
           label({}, 'A ='),

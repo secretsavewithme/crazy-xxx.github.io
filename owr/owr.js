@@ -184,7 +184,7 @@ StartSelector = React.createClass({displayName: "StartSelector",
     var x;
     return div({}, p({
       className: "lead"
-    }, 'The game is not started. To start it select a value for A (target amount of money) and press Start.'), form({
+    }, 'The game is not started yet. Select a value for A (target amount of money) and press Start.'), form({
       className: "form-inline",
       onSubmit: this.handleSubmit
     }, div({
