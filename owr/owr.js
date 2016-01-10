@@ -295,7 +295,7 @@ Game = React.createClass({displayName: "Game",
       className: "btn btn-success btn-lg center-block",
       onClick: this.rollB
     }, 'Roll for B'), finished && this.finalDecision())), div({
-      className: 'row',
+      className: 'row hidden-xs',
       style: {
         marginTop: 20
       }
@@ -316,14 +316,22 @@ Game = React.createClass({displayName: "Game",
             marginTop: 20
           }
         }, div({
-          className: 'col-xs-4'
-        }, _this.listify(roll.duty())), div({
-          className: 'col-xs-3'
-        }, _this.listify(roll.kink())), div({
-          className: 'col-xs-3'
-        }, _this.listify(roll.twist())), div({
-          className: 'col-xs-2'
-        }, "$" + (roll.money())), _this.state.debug && div({
+          className: 'col-sm-4'
+        }, strong({
+          className: 'visible-xs'
+        }, 'Duty:'), _this.listify(roll.duty())), div({
+          className: 'col-sm-3'
+        }, strong({
+          className: 'visible-xs'
+        }, 'Kink:'), _this.listify(roll.kink())), div({
+          className: 'col-sm-3'
+        }, strong({
+          className: 'visible-xs'
+        }, 'Twist:'), _this.listify(roll.twist())), div({
+          className: 'col-sm-2'
+        }, strong({
+          className: 'visible-xs'
+        }, 'Money:'), "$" + (roll.money())), _this.state.debug && div({
           className: 'col-xs-12'
         }, roll.debug()));
       };

@@ -1,6 +1,7 @@
 # TODO:
-# - mobile responsive
+# √ mobile responsive
 # - start new game
+# - save defaults
 
 d = -> parseInt(Math.random() * 10)
 d19 = -> parseInt(1 + Math.random() * 9)
@@ -191,7 +192,7 @@ Game = React.createClass
               'Roll for B'
           finished and
             @finalDecision()
-      div className: 'row', style: {marginTop: 20},
+      div className: 'row hidden-xs', style: {marginTop: 20},
         div className: 'col-xs-4',
           strong {}, 'Duty'
         div className: 'col-xs-3',
@@ -202,10 +203,18 @@ Game = React.createClass
           strong {}, 'Money'
       _.map(@state.rolls, (roll, i) =>
         div key: roll.key, className: "row #{if 0 == i then 'lead' else 'text-muted'}", style: {marginTop: 20},
-          div className: 'col-xs-4', @listify(roll.duty())
-          div className: 'col-xs-3', @listify(roll.kink())
-          div className: 'col-xs-3', @listify(roll.twist())
-          div className: 'col-xs-2', "$#{roll.money()}"
+          div className: 'col-sm-4',
+            (strong className: 'visible-xs', 'Duty:'),
+            @listify(roll.duty())
+          div className: 'col-sm-3',
+            (strong className: 'visible-xs', 'Kink:'),
+            @listify(roll.kink())
+          div className: 'col-sm-3',
+            (strong className: 'visible-xs', 'Twist:'),
+            @listify(roll.twist())
+          div className: 'col-sm-2',
+            (strong className: 'visible-xs', 'Money:'),
+            "$#{roll.money()}"
           @state.debug and
             div className: 'col-xs-12', roll.debug())
       div className: 'row', style: {marginTop: 40},
