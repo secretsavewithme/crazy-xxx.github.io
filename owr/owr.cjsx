@@ -109,7 +109,7 @@ calcMoney = (rolls) ->
   else
     0
 
-{ button, div, form, img, h1, h3, input, label, li, option, p, select, span, strong, ul } = React.DOM
+{ button, div, form, img, h1, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -129,7 +129,7 @@ StartSelector = React.createClass
       form className: "form-inline", onSubmit: @handleSubmit,
         div(className: "form-group",
           label({}, 'A ='),
-          select className: "form-control", onChange: @handleChange,
+          select className: "form-control", onChange: @handleChange, style: {display: 'inline-block', width: 'auto'},
             option(value: 0, 'Random'),
             option(key: x, value: x, "#{x} ($#{x}00)") for x in [1..10]), ' '
         button type: "submit", className: "btn btn-primary", 'Start'
@@ -173,19 +173,22 @@ Game = React.createClass
   toggleOriginal: ->
     @setState original: not @state.original
 
+  moneyLabel: (type, text, additionalClass) ->
+    div className: "col-xs-6 #{additionalClass}",
+      h3 className: 'hidden-xs',
+        span className: "label label-#{type}", text
+      h4 className: 'visible-xs',
+        span className: "label label-#{type}", text
+
   render: ->
     canGetNext = @state.money < @state.target
     beforeFinal = not canGetNext and @state.b == undefined
     finished = not canGetNext and not beforeFinal
     div {},
       div className: 'row',
-        div className: 'col-xs-6',
-          h3 {},
-            span className: 'label label-info', "Your money: $#{@state.money}"
-        div className: 'col-xs-6 text-right',
-          h3 {},
-            span className: 'label label-success', "Target money: $#{@state.target}"
-      div className: 'row',
+        @moneyLabel("info", "Your money: $#{@state.money}")
+        @moneyLabel("success", "Target money: $#{@state.target}", 'text-right')
+      div className: 'row', style: {marginTop: 20},
         div className: 'col-xs-12',
           canGetNext and
             button className: "btn btn-primary btn-lg center-block", onClick: @createNextTask,
