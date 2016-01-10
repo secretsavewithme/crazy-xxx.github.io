@@ -104,7 +104,7 @@ calcMoney = (rolls) ->
   else
     0
 
-{ button, div, form, h1, label, li, option, p, select, small, table, tbody, td, th, tr, ul } = React.DOM
+{ button, div, form, h1, input, label, li, option, p, select, strong, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -134,6 +134,7 @@ Game = React.createClass
     money: 0
     target: @props.A * 100
     rolls: []
+    debug: false
 
   createNextTask: (e) ->
     e.preventDefault()
@@ -157,6 +158,8 @@ Game = React.createClass
         "You #{if can then "can" else "can't"} cum!"
       "Your B is #{@state.b}"
 
+  toggleDebug: ->
+    @setState debug: not @state.debug
 
   render: ->
     canGetNext = @state.money < @state.target
@@ -177,20 +180,27 @@ Game = React.createClass
           finished and
             @finalDecision()
       div className: 'row', style: {marginTop: 20},
-        table className: 'table table-striped',
-          tbody {},
-            tr {},
-              th className: 'col-xs-4', 'Duty'
-              th className: 'col-xs-3', 'Kink'
-              th className: 'col-xs-3', 'Twist'
-              th className: 'col-xs-2', 'Money'
-            _.map(@state.rolls, (roll, i) =>
-              classes = if 0 == i then className: 'lead' else {}
-              tr key: roll.key,
-                td classes, @listify(roll.duty())
-                td classes, @listify(roll.kink())
-                td classes, @listify(roll.twist())
-                td classes, "$#{roll.money()} #{roll.debug()}")
+        div className: 'col-xs-4',
+          strong {}, 'Duty'
+        div className: 'col-xs-3',
+          strong {}, 'Kink'
+        div className: 'col-xs-3',
+          strong {}, 'Twist'
+        div className: 'col-xs-2',
+          strong {}, 'Money'
+      _.map(@state.rolls, (roll, i) =>
+        div key: roll.key, className: "row #{if 0 == i then 'lead' else 'text-muted'}", style: {marginTop: 20},
+          div className: 'col-xs-4', @listify(roll.duty())
+          div className: 'col-xs-3', @listify(roll.kink())
+          div className: 'col-xs-3', @listify(roll.twist())
+          div className: 'col-xs-2', "$#{roll.money()}"
+          @state.debug and
+            div className: 'col-xs-12', roll.debug())
+      div className: 'row',
+        div className: 'col-xs-12 text-right',
+          label {},
+            (input type: 'checkbox', checked: @state.debug, onChange: @toggleDebug),
+            ' Debug'
 
 
 OWRMain = React.createClass
