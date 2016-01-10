@@ -1,3 +1,7 @@
+# TODO:
+# - mobile responsive
+# - start new game
+
 d = -> parseInt(Math.random() * 10)
 d19 = -> parseInt(1 + Math.random() * 9)
 
@@ -100,11 +104,11 @@ calcMoney = (rolls) ->
     [roll, rolls...] = rolls
     return 0 if roll.takesAll()
     m = roll.money() + calcMoney(rolls)
-    if roll.takesHalf() then m / 2 else m
+    if roll.takesHalf() then parseInt(m / 2) else m
   else
     0
 
-{ button, div, form, h1, input, label, li, option, p, select, strong, ul } = React.DOM
+{ button, div, form, h1, h3, input, label, li, option, p, select, span, strong, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -167,8 +171,12 @@ Game = React.createClass
     finished = not canGetNext and not beforeFinal
     div {},
       div className: 'row',
-        div className: 'col-xs-6', "Your money: $#{@state.money}"
-        div className: 'col-xs-6 text-right', "Target money: $#{@state.target}"
+        div className: 'col-xs-6',
+          h3 {},
+            span className: 'label label-info', "Your money: $#{@state.money}"
+        div className: 'col-xs-6 text-right',
+          h3 {},
+            span className: 'label label-success', "Target money: $#{@state.target}"
       div className: 'row',
         div className: 'col-xs-12',
           canGetNext and
@@ -196,7 +204,7 @@ Game = React.createClass
           div className: 'col-xs-2', "$#{roll.money()}"
           @state.debug and
             div className: 'col-xs-12', roll.debug())
-      div className: 'row',
+      div className: 'row', style: {marginTop: 40},
         div className: 'col-xs-12 text-right',
           label {},
             (input type: 'checkbox', checked: @state.debug, onChange: @toggleDebug),
@@ -213,7 +221,7 @@ OWRMain = React.createClass
 
   render: ->
     div className: "container",
-      h1({}, 'OWRMain'),
+      h1({}, 'Oral Whore Roulette'),
       if @state.started then <Game A={@state.A} /> else <StartSelector started={@startGame} />
 
 ReactDOM.render <OWRMain />, document.getElementById('content')
