@@ -36,6 +36,9 @@ Twists = [
   'Your pimp comes around: give him half of your money', #9
 ]
 
+Xmoney = [1000, 20, 20, 30, 20, 35, 40, 70, 40, 55]
+Ymoney = [0, 10, 10, 20, 40, 40, 10, 10, 20, 30]
+
 rollCounter = 0
 
 class Roll
@@ -75,7 +78,33 @@ class Roll
     res.push(@x) if @x == @y
     _.compact(_.map(res, (z) -> Twists[z]))
 
-{ button, div, form, h1, label, li, option, p, select, table, tbody, td, th, tr, ul } = React.DOM
+  money: ->
+    return 0 if 6 == @z
+    moneys = _.map(@numDuty(), (x) -> Xmoney[x])
+    moneys = [_.min(moneys)] if _.contains(@numDuty(), 0)
+    moneys = moneys.concat(_.map(@numKink(), (y) -> Ymoney[y]))
+    moneys = _.map(moneys, (n) -> n * 2) if 8 == @z
+    _.reduce(moneys, ((memo, num) -> memo + num), 0)
+
+  takesAll: ->
+    0 == @x + @y + @z
+
+  takesHalf: ->
+    9 == @z
+
+  debug: ->
+    "x=#{@x} y=#{@y} z=#{@z} x0=#{@x0} y0=#{@y0}"
+
+calcMoney = (rolls) ->
+  if rolls.length
+    [roll, rolls...] = rolls
+    return 0 if roll.takesAll()
+    m = roll.money() + calcMoney(rolls)
+    if roll.takesHalf() then m / 2 else m
+  else
+    0
+
+{ button, div, form, h1, label, li, option, p, select, small, table, tbody, td, th, tr, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
@@ -108,8 +137,12 @@ Game = React.createClass
 
   createNextTask: (e) ->
     e.preventDefault()
-    roll = new Roll()
-    @setState(rolls: [roll].concat(@state.rolls))
+    rolls = [new Roll()].concat(@state.rolls)
+    money = calcMoney(rolls)
+    @setState(rolls: rolls, money: money)
+
+  rollB: ->
+    @setState b: d()
 
   listify: (a) ->
     if a.length > 1
@@ -117,28 +150,47 @@ Game = React.createClass
     else
       a[0]
 
+  finalDecision: ->
+    can = @state.b < @props.A
+    div className: "panel text-center #{if can then 'panel-success' else "panel-danger"}", style: {marginTop: 20},
+      h1 {className: 'panel-heading panel-title'},
+        "You #{if can then "can" else "can't"} cum!"
+      "Your B is #{@state.b}"
+
+
   render: ->
+    canGetNext = @state.money < @state.target
+    beforeFinal = not canGetNext and @state.b == undefined
+    finished = not canGetNext and not beforeFinal
     div {},
       div className: 'row',
         div className: 'col-xs-6', "Your money: $#{@state.money}"
         div className: 'col-xs-6 text-right', "Target money: $#{@state.target}"
       div className: 'row',
         div className: 'col-xs-12',
-          button className: "btn btn-primary btn-lg center-block", onClick: @createNextTask,
-            'Get next task'
+          canGetNext and
+            button className: "btn btn-primary btn-lg center-block", onClick: @createNextTask,
+              'Get next task'
+          beforeFinal and
+            button className: "btn btn-success btn-lg center-block", onClick: @rollB,
+              'Roll for B'
+          finished and
+            @finalDecision()
       div className: 'row', style: {marginTop: 20},
         table className: 'table table-striped',
           tbody {},
             tr {},
               th className: 'col-xs-4', 'Duty'
-              th className: 'col-xs-4', 'Kink'
-              th className: 'col-xs-4', 'Twist'
+              th className: 'col-xs-3', 'Kink'
+              th className: 'col-xs-3', 'Twist'
+              th className: 'col-xs-2', 'Money'
             _.map(@state.rolls, (roll, i) =>
               classes = if 0 == i then className: 'lead' else {}
               tr key: roll.key,
                 td classes, @listify(roll.duty())
                 td classes, @listify(roll.kink())
-                td classes, @listify(roll.twist()))
+                td classes, @listify(roll.twist())
+                td classes, "$#{roll.money()} #{roll.debug()}")
 
 
 OWRMain = React.createClass
