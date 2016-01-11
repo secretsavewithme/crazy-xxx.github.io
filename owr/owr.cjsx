@@ -1,6 +1,7 @@
 # TODO:
 # √ mobile responsive
 # √ start new game
+# √ ga
 # - save defaults
 
 d = -> parseInt(Math.random() * 10)
