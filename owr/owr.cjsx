@@ -252,7 +252,6 @@ OWRMain = React.createClass
     @setState started: false, A: undefined
 
   render: ->
-    console.log 'state', @state
     div className: "container",
       h1({}, 'Oral Whore Roulette'),
       if @state.started

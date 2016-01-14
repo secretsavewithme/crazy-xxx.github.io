@@ -400,7 +400,6 @@ OWRMain = React.createClass({displayName: "OWRMain",
     });
   },
   render: function() {
-    console.log('state', this.state);
     return div({
       className: "container"
     }, h1({}, 'Oral Whore Roulette'), this.state.started ? React.createElement(Game, {
