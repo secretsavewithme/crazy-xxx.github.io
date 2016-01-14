@@ -168,7 +168,7 @@ ref = React.DOM, button = ref.button, div = ref.div, form = ref.form, img = ref.
 StartSelector = React.createClass({displayName: "StartSelector",
   getInitialState: function() {
     return {
-      value: 0
+      value: this.props.A || 0
     };
   },
   handleSubmit: function(e) {
@@ -191,6 +191,7 @@ StartSelector = React.createClass({displayName: "StartSelector",
       className: "form-group"
     }, label({}, 'A ='), select({
       className: "form-control",
+      defaultValue: this.props.A,
       onChange: this.handleChange,
       style: {
         display: 'inline-block',
@@ -375,8 +376,15 @@ Game = React.createClass({displayName: "Game",
 OWRMain = React.createClass({displayName: "OWRMain",
   getInitialState: function() {
     return {
-      started: false
+      started: false,
+      A: this.getAFromQuery()
     };
+  },
+  getAFromQuery: function() {
+    var m;
+    if (m = top.location.search.match(/[?&]a=(\d+)/)) {
+      return _.min([+m[1], 10]);
+    }
   },
   startGame: function(a) {
     a || (a = parseInt(1 + Math.random() * 10));
@@ -392,13 +400,15 @@ OWRMain = React.createClass({displayName: "OWRMain",
     });
   },
   render: function() {
+    console.log('state', this.state);
     return div({
       className: "container"
     }, h1({}, 'Oral Whore Roulette'), this.state.started ? React.createElement(Game, {
       "A": this.state.A,
       "startAnother": this.startAnother
     }) : React.createElement(StartSelector, {
-      "started": this.startGame
+      "started": this.startGame,
+      "A": this.state.A
     }));
   }
 });

@@ -2,6 +2,7 @@
 # √ mobile responsive
 # √ start new game
 # √ ga
+# √ a from param
 # - save defaults
 
 d = -> parseInt(Math.random() * 10)
@@ -114,7 +115,7 @@ calcMoney = (rolls) ->
 
 StartSelector = React.createClass
   getInitialState: ->
-    value: 0
+    value: @props.A || 0
 
   handleSubmit: (e) ->
     e.preventDefault()
@@ -130,7 +131,7 @@ StartSelector = React.createClass
       form className: "form-inline", onSubmit: @handleSubmit,
         div(className: "form-group",
           label({}, 'A ='),
-          select className: "form-control", onChange: @handleChange, style: {display: 'inline-block', width: 'auto'},
+          select className: "form-control", defaultValue: @props.A, onChange: @handleChange, style: {display: 'inline-block', width: 'auto'},
             option(value: 0, 'Random'),
             option(key: x, value: x, "#{x} ($#{x}00)") for x in [1..10]), ' '
         button type: "submit", className: "btn btn-primary", 'Start'
@@ -238,6 +239,10 @@ Game = React.createClass
 OWRMain = React.createClass
   getInitialState: ->
     started: false
+    A: @getAFromQuery()
+
+  getAFromQuery: ->
+    _.min([+m[1], 10]) if m = top.location.search.match(/[?&]a=(\d+)/)
 
   startGame: (a) ->
     a ||= parseInt(1 + Math.random() * 10)
@@ -247,8 +252,12 @@ OWRMain = React.createClass
     @setState started: false, A: undefined
 
   render: ->
+    console.log 'state', @state
     div className: "container",
       h1({}, 'Oral Whore Roulette'),
-      if @state.started then <Game A={@state.A} startAnother={@startAnother} /> else <StartSelector started={@startGame} />
+      if @state.started
+        <Game A={@state.A} startAnother={@startAnother} />
+      else
+        <StartSelector started={@startGame} A={@state.A} />
 
 ReactDOM.render <OWRMain />, document.getElementById('content')
