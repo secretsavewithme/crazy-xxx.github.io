@@ -65,9 +65,11 @@ Game = React.createClass({displayName: "Game",
     }
   },
   speak: function(task) {
-    return responsiveVoice.speak(task, "UK English Female", {
-      rate: 0.8
-    });
+    if (this.props.speechEnabled) {
+      return responsiveVoice.speak(task, "UK English Female", {
+        rate: 0.8
+      });
+    }
   },
   getNextTask: function() {
     var task;
@@ -97,7 +99,8 @@ Game = React.createClass({displayName: "Game",
 TH1Main = React.createClass({displayName: "TH1Main",
   getInitialState: function() {
     return {
-      started: false
+      started: false,
+      speechEnabled: true
     };
   },
   startAnother: function() {
@@ -110,17 +113,37 @@ TH1Main = React.createClass({displayName: "TH1Main",
       started: true
     });
   },
+  toggleSpeech: function() {
+    return this.setState({
+      speechEnabled: !this.state.speechEnabled
+    });
+  },
   render: function() {
     return div({
       className: "container"
     }, h1({}, 'Throat Heaven 1'), this.renderIntroduction(), this.state.started ? React.createElement(Game, {
-      startAnother: this.startAnother
-    }) : this.renderStartGameButton(), fullRow(p({
-      className: 'pull-right lead'
+      startAnother: this.startAnother,
+      speechEnabled: this.state.speechEnabled
+    }) : this.renderStartGameButton(), this.renderFooter());
+  },
+  renderFooter: function() {
+    return div({
+      className: 'row',
+      style: {
+        marginTop: 20
+      }
+    }, div({
+      className: "col-xs-4"
+    }, label({}, input({
+      type: 'checkbox',
+      checked: this.state.speechEnabled,
+      onChange: this.toggleSpeech
+    }), ' Enable speech')), div({
+      className: "col-xs-8 pull-right lead"
     }, 'Based on ', a({
       href: 'http://www.getdare.com/bbs/showthread.php?t=176573',
       target: '_blank'
-    }, 'Throat Heaven 1 dare'))));
+    }, 'Throat Heaven 1 dare')));
   },
   renderStartGameButton: function() {
     return fullRow(button({

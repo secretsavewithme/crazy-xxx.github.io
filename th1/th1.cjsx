@@ -56,7 +56,7 @@ Game = React.createClass
       _.sample(@tasks[num])
 
   speak: (task) ->
-    responsiveVoice.speak(task, "UK English Female", {rate: 0.8})
+    responsiveVoice.speak(task, "UK English Female", {rate: 0.8}) if @props.speechEnabled
 
   getNextTask: ->
     task = @randomTask(@state.nextTask)
@@ -81,6 +81,7 @@ Game = React.createClass
 TH1Main = React.createClass
   getInitialState: ->
     started: false
+    speechEnabled: true
 
   startAnother: ->
     @setState started: false
@@ -88,19 +89,29 @@ TH1Main = React.createClass
   startGame: ->
     @setState started: true
 
+  toggleSpeech: ->
+    @setState speechEnabled: not @state.speechEnabled
+
   render: ->
     div className: "container",
       h1({}, 'Throat Heaven 1'),
       @renderIntroduction()
       if @state.started
-        React.createElement(Game, startAnother: @startAnother)
+        React.createElement(Game, startAnother: @startAnother, speechEnabled: @state.speechEnabled)
       else
         @renderStartGameButton()
-      fullRow(
-        p className: 'pull-right lead',
-          'Based on '
-          a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
-            'Throat Heaven 1 dare')
+      @renderFooter()
+
+  renderFooter: ->
+    div className: 'row', style: {marginTop: 20},
+      div className: "col-xs-4",
+        label {},
+          (input type: 'checkbox', checked: @state.speechEnabled, onChange: @toggleSpeech),
+          ' Enable speech'
+      div className: "col-xs-8 pull-right lead",
+        'Based on '
+        a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
+          'Throat Heaven 1 dare'
 
   renderStartGameButton: ->
     fullRow button className: "btn btn-primary btn-lg center-block", onClick: @startGame, 'Start a new dare'
