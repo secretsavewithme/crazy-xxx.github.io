@@ -55,8 +55,12 @@ Game = React.createClass
     else
       _.sample(@tasks[num])
 
+  speak: (task) ->
+    responsiveVoice.speak(task, "UK English Female", {rate: 0.8})
+
   getNextTask: ->
     task = @randomTask(@state.nextTask)
+    @speak(task)
     @setState(nextTask: 1 + @state.nextTask, tasks: @state.tasks.concat(task))
 
   render: ->

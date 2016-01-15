@@ -64,9 +64,15 @@ Game = React.createClass({displayName: "Game",
       return _.sample(this.tasks[num]);
     }
   },
+  speak: function(task) {
+    return responsiveVoice.speak(task, "UK English Female", {
+      rate: 0.8
+    });
+  },
   getNextTask: function() {
     var task;
     task = this.randomTask(this.state.nextTask);
+    this.speak(task);
     return this.setState({
       nextTask: 1 + this.state.nextTask,
       tasks: this.state.tasks.concat(task)
