@@ -81,7 +81,10 @@ Game = React.createClass
 TH1Main = React.createClass
   getInitialState: ->
     started: false
-    speechEnabled: true
+    speechEnabled: @isSpeechEnabled()
+
+  isSpeechEnabled: ->
+    window.localStorage?.speechEnabled == 'true'
 
   startAnother: ->
     @setState started: false
@@ -90,7 +93,9 @@ TH1Main = React.createClass
     @setState started: true
 
   toggleSpeech: ->
-    @setState speechEnabled: not @state.speechEnabled
+    speechEnabled = not @state.speechEnabled
+    window.localStorage?.speechEnabled = speechEnabled
+    @setState speechEnabled: speechEnabled
 
   render: ->
     div className: "container",
@@ -104,14 +109,15 @@ TH1Main = React.createClass
 
   renderFooter: ->
     div className: 'row', style: {marginTop: 20},
-      div className: "col-xs-4",
+      div className: "col-xs-5",
         label {},
           (input type: 'checkbox', checked: @state.speechEnabled, onChange: @toggleSpeech),
           ' Enable speech'
-      div className: "col-xs-8 pull-right lead",
-        'Based on '
-        a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
-          'Throat Heaven 1 dare'
+      div className: "col-xs-7",
+        p className: 'pull-right lead',
+          'Based on '
+          a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
+            'Throat Heaven 1 dare'
 
   renderStartGameButton: ->
     fullRow button className: "btn btn-primary btn-lg center-block", onClick: @startGame, 'Start a new dare'

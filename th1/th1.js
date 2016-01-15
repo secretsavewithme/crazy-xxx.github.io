@@ -100,8 +100,12 @@ TH1Main = React.createClass({displayName: "TH1Main",
   getInitialState: function() {
     return {
       started: false,
-      speechEnabled: true
+      speechEnabled: this.isSpeechEnabled()
     };
+  },
+  isSpeechEnabled: function() {
+    var ref1;
+    return ((ref1 = window.localStorage) != null ? ref1.speechEnabled : void 0) === 'true';
   },
   startAnother: function() {
     return this.setState({
@@ -114,8 +118,13 @@ TH1Main = React.createClass({displayName: "TH1Main",
     });
   },
   toggleSpeech: function() {
+    var ref1, speechEnabled;
+    speechEnabled = !this.state.speechEnabled;
+    if ((ref1 = window.localStorage) != null) {
+      ref1.speechEnabled = speechEnabled;
+    }
     return this.setState({
-      speechEnabled: !this.state.speechEnabled
+      speechEnabled: speechEnabled
     });
   },
   render: function() {
@@ -133,17 +142,19 @@ TH1Main = React.createClass({displayName: "TH1Main",
         marginTop: 20
       }
     }, div({
-      className: "col-xs-4"
+      className: "col-xs-5"
     }, label({}, input({
       type: 'checkbox',
       checked: this.state.speechEnabled,
       onChange: this.toggleSpeech
     }), ' Enable speech')), div({
-      className: "col-xs-8 pull-right lead"
+      className: "col-xs-7"
+    }, p({
+      className: 'pull-right lead'
     }, 'Based on ', a({
       href: 'http://www.getdare.com/bbs/showthread.php?t=176573',
       target: '_blank'
-    }, 'Throat Heaven 1 dare')));
+    }, 'Throat Heaven 1 dare'))));
   },
   renderStartGameButton: function() {
     return fullRow(button({
