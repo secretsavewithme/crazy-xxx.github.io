@@ -1,4 +1,4 @@
-{ button, div, form, img, h1, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
+{ a, button, div, form, img, h1, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
 
 row = (optsOrContent, maybeContent) ->
   if maybeContent
@@ -61,7 +61,7 @@ Game = React.createClass
 
   render: ->
     div {},
-      fullRow additionalClass: 'lead',
+      fullRow additionalClass: 'xxlead',
         span {},
           strong {}, 'Position: '
           @state.position
@@ -86,14 +86,29 @@ TH1Main = React.createClass
 
   render: ->
     div className: "container",
-      h1({}, 'TH1Main'),
+      h1({}, 'Throat Heaven 1'),
+      @renderIntroduction()
       if @state.started
         React.createElement(Game, startAnother: @startAnother)
       else
         @renderStartGameButton()
+      fullRow(
+        p className: 'pull-right lead',
+          'Based on '
+          a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
+            'Throat Heaven 1 dare')
 
   renderStartGameButton: ->
     fullRow button className: "btn btn-primary btn-lg center-block", onClick: @startGame, 'Start a new dare'
+
+  renderIntroduction: ->
+    div className: 'panel panel-default',
+      div className: 'panel-heading',
+        h3 className: 'panel-title', 'Introduction'
+      div className: 'panel-body',
+        p {}, "Get naked. Grab your doubledildo or something that you can swallow."
+        p {}, "Place a bowl under your face. You will create lots of spit, don't swallow it, the bowl has to be full of your spit."
+        p {}, "Roll to determine how you must suck the dildo. "
 
 ReactDOM.render(
   React.createElement(TH1Main, null),
