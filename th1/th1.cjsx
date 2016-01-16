@@ -1,4 +1,5 @@
 { a, button, div, form, img, h1, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
+el = React.createElement
 
 row = (optsOrContent, maybeContent) ->
   if maybeContent
@@ -21,6 +22,21 @@ fullRow = (optsOrContent, maybeContent) ->
 
 d16 = -> parseInt(1 + Math.random() * 6)
 
+Panel = React.createClass
+  getDefaultProps: ->
+    panelClass: 'panel-default'
+
+  render: ->
+    panelClass = 'panel ' + if _.isUndefined(@props.primaryPanel)
+      @props.panelClass
+    else
+      if @props.primaryPanel then 'panel-primary' else 'panel-default'
+    div className: panelClass,
+      if @props.heading
+        div className: 'panel-heading',
+          h3 className: 'panel-title', @props.heading
+      div className: 'panel-body', @props.body
+
 Game = React.createClass
   getInitialState: ->
     position: @randomPosition()
@@ -32,10 +48,10 @@ Game = React.createClass
 
   tasks: [
     #0
-    ['lick on it','gag on it 5 times','gag on it 10 times','swallow it down your throat 5 times','swallow it down your throat 10 times',
-        'gag on it 15 times, then swallow it down your throat 15 times'],
+    ['Lick on it','Gag on it 5 times','Gag on it 10 times','Swallow it down your throat 5 times','Swallow it down your throat 10 times',
+        'Gag on it 15 times, then swallow it down your throat 15 times'],
     #1
-    ['Very slowly, go deeper and deeper','push it down your throat and leave it there for 3 seconds.','push it down your throat and leave it there for 6 seconds.',
+    ['Very slowly, go deeper and deeper','Push it down your throat and leave it there for 3 seconds.','Push it down your throat and leave it there for 6 seconds.',
          'Push it in as fast as you can and leave it there for 10 seconds','Push it in as fast as you can and leave it there for 15 seconds',
          'Push it into your throat and out as fast you can 3 times, repeat it 5 times',],
     #2
@@ -56,7 +72,7 @@ Game = React.createClass
       _.sample(@tasks[num])
 
   speak: (task) ->
-    responsiveVoice.speak(task, "UK English Female", {rate: 0.8}) if @props.speechEnabled
+    responsiveVoice.speak(task, "UK English Female", rate: 0.8) if @props.speechEnabled
 
   getNextTask: ->
     task = @randomTask(@state.nextTask)
@@ -64,18 +80,18 @@ Game = React.createClass
     @setState(nextTask: 1 + @state.nextTask, tasks: @state.tasks.concat(task))
 
   render: ->
+    _.defer ->
+      $("html, body").animate(scrollTop: $(document).height())
+      # window.scrollTo(0, document.body.scrollHeight)
     div {},
-      fullRow additionalClass: 'xxlead',
-        span {},
-          strong {}, 'Position: '
-          @state.position
+      el Panel, primaryPanel: 0 == @state.nextTask, heading: 'Position', body: @state.position
       _.map(@state.tasks, (task, i) =>
-        fullRow(key: "task" + i, task))
+        el Panel, key: "task" + i, primaryPanel: i + 1 == @state.nextTask, heading: 'Task ' + (i + 1), body: task)
       fullRow(
         if @state.nextTask < @tasks.length
           button className: "btn btn-primary btn-lg center-block", onClick: @getNextTask, 'Get next task'
         else
-          span {}, 'Finished!')
+          button className: "btn btn-danger btn-lg center-block", onClick: @props.startAnother, 'Start another game')
 
 
 TH1Main = React.createClass
@@ -102,7 +118,7 @@ TH1Main = React.createClass
       h1({}, 'Throat Heaven 1'),
       @renderIntroduction()
       if @state.started
-        React.createElement(Game, startAnother: @startAnother, speechEnabled: @state.speechEnabled)
+        el(Game, startAnother: @startAnother, speechEnabled: @state.speechEnabled)
       else
         @renderStartGameButton()
       @renderFooter()
@@ -123,14 +139,15 @@ TH1Main = React.createClass
     fullRow button className: "btn btn-primary btn-lg center-block", onClick: @startGame, 'Start a new dare'
 
   renderIntroduction: ->
-    div className: 'panel panel-default',
-      div className: 'panel-heading',
-        h3 className: 'panel-title', 'Introduction'
-      div className: 'panel-body',
-        p {}, "Get naked. Grab your doubledildo or something that you can swallow."
-        p {}, "Place a bowl under your face. You will create lots of spit, don't swallow it, the bowl has to be full of your spit."
-        p {}, "Roll to determine how you must suck the dildo. "
+    el Panel,
+      primaryPanel: not @state.started,
+      heading: 'Introduction',
+      body:
+        div {},
+          p {}, "Get naked. Grab your doubledildo or something that you can swallow."
+          p {}, "Place a bowl under your face. You will create lots of spit, don't swallow it, the bowl has to be full of your spit."
+          p {}, "Roll to determine how you must suck the dildo. "
 
 ReactDOM.render(
-  React.createElement(TH1Main, null),
+  el(TH1Main, null),
   document.getElementById('content'))
