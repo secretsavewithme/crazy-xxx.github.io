@@ -18,7 +18,8 @@ row = function(optsOrContent, maybeContent) {
     key: opts.key,
     className: 'row',
     style: {
-      marginTop: 20
+      marginTop: 20,
+      marginBottom: opts.marginBottom
     }
   }, content);
 };
@@ -100,35 +101,43 @@ Game = React.createClass({displayName: "Game",
     this.speak(task);
     return this.setState({
       nextTask: 1 + this.state.nextTask,
-      tasks: this.state.tasks.concat(task)
+      tasks: [task].concat(this.state.tasks)
     });
   },
   render: function() {
-    _.defer(function() {
-      return $("html, body").animate({
-        scrollTop: $(document).height()
-      });
-    });
-    return div({}, el(Panel, {
+    return div({}, this.renderButton(), this.renderTasks(), this.renderPosition());
+  },
+  renderPosition: function() {
+    return el(Panel, {
       primaryPanel: 0 === this.state.nextTask,
       heading: 'Position',
       body: this.state.position
-    }), _.map(this.state.tasks, (function(_this) {
+    });
+  },
+  renderTasks: function() {
+    return _.map(this.state.tasks, (function(_this) {
       return function(task, i) {
+        var n;
+        n = _this.state.nextTask - i;
         return el(Panel, {
-          key: "task" + i,
-          primaryPanel: i + 1 === _this.state.nextTask,
-          heading: 'Task ' + (i + 1),
+          key: "task" + n,
+          primaryPanel: 0 === i,
+          heading: 'Task ' + n,
           body: task
         });
       };
-    })(this)), fullRow(this.state.nextTask < this.tasks.length ? button({
+    })(this));
+  },
+  renderButton: function() {
+    return fullRow({
+      marginBottom: 20
+    }, this.state.nextTask < this.tasks.length ? button({
       className: "btn btn-primary btn-lg center-block",
       onClick: this.getNextTask
     }, 'Get next task') : button({
       className: "btn btn-danger btn-lg center-block",
       onClick: this.props.startAnother
-    }, 'Start another game')));
+    }, 'Start another game'));
   }
 });
 

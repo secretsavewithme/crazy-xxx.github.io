@@ -8,7 +8,7 @@ row = (optsOrContent, maybeContent) ->
   else
     content = optsOrContent
     opts = {}
-  div key: opts.key, className: 'row', style: {marginTop: 20}, content
+  div key: opts.key, className: 'row', style: {marginTop: 20, marginBottom: opts.marginBottom}, content
 
 fullRow = (optsOrContent, maybeContent) ->
   if maybeContent
@@ -77,21 +77,28 @@ Game = React.createClass
   getNextTask: ->
     task = @randomTask(@state.nextTask)
     @speak(task)
-    @setState(nextTask: 1 + @state.nextTask, tasks: @state.tasks.concat(task))
+    @setState(nextTask: 1 + @state.nextTask, tasks: [task].concat(@state.tasks))
 
   render: ->
-    _.defer ->
-      $("html, body").animate(scrollTop: $(document).height())
-      # window.scrollTo(0, document.body.scrollHeight)
     div {},
-      el Panel, primaryPanel: 0 == @state.nextTask, heading: 'Position', body: @state.position
-      _.map(@state.tasks, (task, i) =>
-        el Panel, key: "task" + i, primaryPanel: i + 1 == @state.nextTask, heading: 'Task ' + (i + 1), body: task)
-      fullRow(
-        if @state.nextTask < @tasks.length
-          button className: "btn btn-primary btn-lg center-block", onClick: @getNextTask, 'Get next task'
-        else
-          button className: "btn btn-danger btn-lg center-block", onClick: @props.startAnother, 'Start another game')
+      @renderButton()
+      @renderTasks()
+      @renderPosition()
+
+  renderPosition: ->
+    el Panel, primaryPanel: 0 == @state.nextTask, heading: 'Position', body: @state.position
+
+  renderTasks: ->
+    _.map(@state.tasks, (task, i) =>
+      n = @state.nextTask - i
+      el Panel, key: "task" + n, primaryPanel: 0 == i, heading: 'Task ' + n, body: task)
+
+  renderButton: ->
+    fullRow(marginBottom: 20,
+      if @state.nextTask < @tasks.length
+        button className: "btn btn-primary btn-lg center-block", onClick: @getNextTask, 'Get next task'
+      else
+        button className: "btn btn-danger btn-lg center-block", onClick: @props.startAnother, 'Start another game')
 
 
 TH1Main = React.createClass
