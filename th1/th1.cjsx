@@ -37,6 +37,41 @@ Panel = React.createClass
           h3 className: 'panel-title', @props.heading
       div className: 'panel-body', @props.body
 
+TimerButton = React.createClass
+  getInitialState: ->
+    countdown: undefined
+    timer: undefined
+    done: false
+
+  startTimer: ->
+    @setState(countdown: 3)
+    @interval = setInterval @timerCallback, 1000
+
+  timerCallback: ->
+    if @state.countdown > 0
+      @setState(countdown: @state.countdown - 1, timer: @props.seconds)
+    else if @state.timer > 0
+      @setState(timer: @state.timer - 1, done: 1 == @state.timer)
+    else if @state.timer == 0
+      clearInterval @interval
+      @interval = 0
+
+  componentWillUnmount: ->
+    clearInterval @interval if @interval
+
+  render: ->
+    if @state.countdown
+      #@props.speak("Ready in #{@state.countdown}...")
+      p className: 'lead', "Ready in #{@state.countdown}..."
+    else if @state.timer
+      #@props.speak("Ready in #{@state.countdown}...")
+      p className: 'lead', "Hold it! #{@state.timer}..."
+    else if @state.done
+      #@props.speak("Ready in #{@state.countdown}...")
+      p className: 'lead', "Done. If you couldn't make it, try again and hold it as long as you can this time."
+    else
+      button className: "btn btn-warning btn-lg", onClick: @startTimer, style: {marginRight: 20}, 'Start timer'
+
 Game = React.createClass
   getInitialState: ->
     position: @randomPosition()
@@ -57,27 +92,35 @@ Game = React.createClass
     #2
     [],
     #3
-    ['Play with your spit with both hands','I want to see your face full of spit','Get all that Spit back into your dirty mouth, after that back into the bowl, slowly',
-         'Gather all the spit in your hands, then suck it back into your mouth','Get all that Spit back into your dirty mouth and swallow it',
+    ['Play with your spit with both hands','I want to see your face full of spit','Get all that spit back into your dirty mouth, after that back into the bowl, slowly',
+         'Gather all the spit in your hands, then suck it back into your mouth','Get all that spit back into your dirty mouth and swallow it',
          'Take all that spit and grease it on your belly, tits and face',],
   ]
 
   randomTask: (num) ->
-    if 2 == num
-      d3 = d16()
-      secs = 0
-      secs += d16() for [1..d3]
-      "Hold your dildo in your throat for #{secs} seconds."
-    else
-      _.sample(@tasks[num])
+    _.sample(@tasks[num])
+
+  timerTask: ->
+    d3 = d16()
+    secs = 0
+    secs += d16() while d3--
+    secs
 
   speak: (task) ->
     responsiveVoice.speak(task, "UK English Female", rate: 0.8) if @props.speechEnabled
 
   getNextTask: ->
-    task = @randomTask(@state.nextTask)
+    timerTask = 2 == @state.nextTask
+    task = if timerTask
+      "Hold your dildo in your throat for #{@timerTask()} seconds."
+    else
+      @randomTask(@state.nextTask)
+    secs = +m[1] if m = task.match(/(\d+) seconds/)
     @speak(task)
-    @setState(nextTask: 1 + @state.nextTask, tasks: [task].concat(@state.tasks))
+    @setState(
+      nextTask: 1 + @state.nextTask,
+      tasks: [task].concat(@state.tasks),
+      timerSecs: secs)
 
   render: ->
     div {},
@@ -96,9 +139,12 @@ Game = React.createClass
   renderButton: ->
     fullRow(marginBottom: 20,
       if @state.nextTask < @tasks.length
-        button className: "btn btn-primary btn-lg center-block", onClick: @getNextTask, 'Get next task'
+        div className: 'text-center center-block',
+          if @state.timerSecs
+            el TimerButton, key: 'timer' + @state.nextTask, seconds: @state.timerSecs, speak: @speak
+          button className: "btn btn-primary btn-lg ", onClick: @getNextTask, 'Get next task'
       else
-        button className: "btn btn-danger btn-lg center-block", onClick: @props.startAnother, 'Start another game')
+        button className: "btn btn-success btn-lg center-block", onClick: @props.startAnother, 'Start another game')
 
 
 TH1Main = React.createClass
