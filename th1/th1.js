@@ -75,16 +75,21 @@ TimerButton = React.createClass({displayName: "TimerButton",
   },
   timerCallback: function() {
     if (this.state.countdown > 0) {
+      this.props.speak(3 === this.state.countdown ? "Ready in " + this.state.countdown : "" + this.state.countdown);
       return this.setState({
         countdown: this.state.countdown - 1,
         timer: this.props.seconds
       });
     } else if (this.state.timer > 0) {
+      if (this.state.timer === this.props.seconds) {
+        this.props.speak('Hold it!');
+      }
       return this.setState({
         timer: this.state.timer - 1,
         done: 1 === this.state.timer
       });
     } else if (this.state.timer === 0) {
+      this.props.speak('Done.');
       clearInterval(this.interval);
       return this.interval = 0;
     }
@@ -167,7 +172,7 @@ Game = React.createClass({displayName: "Game",
   speak: function(task) {
     if (this.props.speechEnabled) {
       return responsiveVoice.speak(task, "UK English Female", {
-        rate: 0.8
+        rate: 1
       });
     }
   },

@@ -47,10 +47,13 @@ TimerButton = React.createClass
 
   timerCallback: ->
     if @state.countdown > 0
+      @props.speak(if 3 == @state.countdown then "Ready in #{@state.countdown}" else ""+@state.countdown)
       @setState(countdown: @state.countdown - 1, timer: @props.seconds)
     else if @state.timer > 0
+      @props.speak('Hold it!') if @state.timer == @props.seconds
       @setState(timer: @state.timer - 1, done: 1 == @state.timer)
     else if @state.timer == 0
+      @props.speak('Done.')
       clearInterval @interval
       @interval = 0
 
@@ -59,13 +62,10 @@ TimerButton = React.createClass
 
   render: ->
     if @state.countdown
-      #@props.speak("Ready in #{@state.countdown}...")
       p className: 'lead', "Ready in #{@state.countdown}..."
     else if @state.timer
-      #@props.speak("Ready in #{@state.countdown}...")
       p className: 'lead', "Hold it! #{@state.timer}..."
     else if @state.done
-      #@props.speak("Ready in #{@state.countdown}...")
       p className: 'lead', "Done. If you couldn't make it, try again and hold it as long as you can this time."
     else
       button className: "btn btn-warning btn-lg", onClick: @startTimer, style: {marginRight: 20}, 'Start timer'
@@ -176,7 +176,11 @@ Game = React.createClass
     secs
 
   speak: (task) ->
-    responsiveVoice.speak(task, "UK English Female", rate: 0.8) if @props.speechEnabled
+    # msg = new SpeechSynthesisUtterance(task);
+    # msg.rate = 0.8
+    # msg.voice = window.speechSynthesis.getVoices()[2]
+    # window.speechSynthesis.speak(msg);
+    responsiveVoice.speak(task, "UK English Female", rate: 1) if @props.speechEnabled
 
   deepthroatingTaskNum: ->
     if @props.mode == 1 then 2 else 3
