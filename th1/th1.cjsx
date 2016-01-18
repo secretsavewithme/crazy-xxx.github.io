@@ -20,8 +20,6 @@ fullRow = (optsOrContent, maybeContent) ->
   row(opts,
     div(className: "col-xs-12 #{opts.additionalClass}", content))
 
-d16 = -> parseInt(1 + Math.random() * 6)
-
 Panel = React.createClass
   getDefaultProps: ->
     panelClass: 'panel-default'
@@ -83,27 +81,47 @@ Game = React.createClass
 
   tasks: [
     #0
-    ['Lick on it','Gag on it 5 times','Gag on it 10 times','Swallow it down your throat 5 times','Swallow it down your throat 10 times',
-        'Gag on it 15 times, then swallow it down your throat 15 times'],
+    [ 'Lick on it',
+      'Gag on it 5 times',
+      'Gag on it 10 times',
+      'Swallow it down your throat 5 times',
+      'Swallow it down your throat 10 times',
+      'Gag on it 15 times, then swallow it down your throat 15 times'],
     #1
-    ['Very slowly, go deeper and deeper','Push it down your throat and leave it there for 3 seconds.','Push it down your throat and leave it there for 6 seconds.',
-         'Push it in as fast as you can and leave it there for 10 seconds','Push it in as fast as you can and leave it there for 15 seconds',
-         'Push it into your throat and out as fast you can 3 times, repeat it 5 times',],
+    [ 'Very slowly, go deeper and deeper',
+      'Push it down your throat and leave it there for 3 seconds.',
+      'Push it down your throat and leave it there for 6 seconds.',
+      'Push it in as fast as you can and leave it there for 10 seconds',
+      'Push it in as fast as you can and leave it there for 15 seconds',
+      'Push it into your throat and out as fast you can 3 times, repeat it 5 times',],
     #2
     [],
     #3
-    ['Play with your spit with both hands','I want to see your face full of spit','Get all that spit back into your dirty mouth, after that back into the bowl, slowly',
-         'Gather all the spit in your hands, then suck it back into your mouth','Get all that spit back into your dirty mouth and swallow it',
-         'Take all that spit and grease it on your belly, tits and face',],
+    [ 'Play with your spit with both hands',
+      'I want to see your face full of spit',
+      'Take all that spit and grease it on your belly, tits and face',
+      'Get all that spit back into your dirty mouth, after that back into the bowl, slowly',
+      'Gather all the spit in your hands, then suck it back into your mouth',
+      'Get all that spit back into your dirty mouth and swallow it',],
   ]
 
   randomTask: (num) ->
-    _.sample(@tasks[num])
+    if @props.hardcore
+      l = @tasks[num].length - 1
+      @tasks[num][_.max([_.random(l),_.random(l)])]
+    else
+      _.sample(@tasks[num])
+
+  d16: ->
+    if @props.hardcore
+      _.max([_.random(1, 6),_.random(1, 6)])
+    else
+      _.random(1, 6)
 
   timerTask: ->
-    d3 = d16()
+    d3 = @d16()
     secs = 0
-    secs += d16() while d3--
+    secs += @d16() while d3--
     secs
 
   speak: (task) ->
@@ -123,6 +141,8 @@ Game = React.createClass
       timerSecs: secs)
 
   render: ->
+    if 0 == @state.nextTask
+      _.defer -> $("html, body").animate(scrollTop: $(document).height())
     div {},
       @renderButton()
       @renderTasks()
@@ -156,9 +176,13 @@ TH1Main = React.createClass
   getInitialState: ->
     started: false
     speechEnabled: @isSpeechEnabled()
+    hardcore: @isHardcore()
 
   isSpeechEnabled: ->
     window.localStorage?.speechEnabled == 'true'
+
+  isHardcore: ->
+    top.location.search.match(/[?&]hardcore=1/) or window.localStorage?.hardcore == 'true'
 
   startAnother: ->
     @setState started: false
@@ -171,23 +195,31 @@ TH1Main = React.createClass
     window.localStorage?.speechEnabled = speechEnabled
     @setState speechEnabled: speechEnabled
 
+  toggleHardcore: ->
+    hardcore = not @state.hardcore
+    window.localStorage?.hardcore = hardcore
+    @setState hardcore: hardcore
+
   render: ->
     div className: "container",
       h1({}, 'Throat Heaven 1'),
       @renderIntroduction()
       if @state.started
-        el(Game, startAnother: @startAnother, speechEnabled: @state.speechEnabled)
+        el(Game, startAnother: @startAnother, speechEnabled: @state.speechEnabled, hardcore: @state.hardcore)
       else
         @renderStartGameButton()
       @renderFooter()
 
   renderFooter: ->
     div className: 'row', style: {marginTop: 20},
-      div className: "col-xs-5",
+      div className: "col-xs-6",
         label {},
           (input type: 'checkbox', checked: @state.speechEnabled, onChange: @toggleSpeech),
-          ' Enable speech'
-      div className: "col-xs-7",
+          ' Enable speech  '
+        label {},
+          (input type: 'checkbox', checked: @state.hardcore, onChange: @toggleHardcore),
+          ' Hardcore mode'
+      div className: "col-xs-6",
         p className: 'pull-right lead',
           'Based on '
           a href: 'http://www.getdare.com/bbs/showthread.php?t=176573', target: '_blank',
