@@ -131,10 +131,15 @@ Game = React.createClass
   renderPosition: ->
     el Panel, primaryPanel: 0 == @state.nextTask, heading: 'Position', body: @state.position
 
+  Headings: ['', 'Just a bit of warm up...', "Horny, aren't you? Now insert the dildo into your throat:", "Deepthroating time!", "Let's play with your spit now..."]
+
+  headingFor: (n) ->
+    "Task #{n} — #{@Headings[n]}"
+
   renderTasks: ->
     _.map(@state.tasks, (task, i) =>
       n = @state.nextTask - i
-      el Panel, key: "task" + n, primaryPanel: 0 == i, heading: 'Task ' + n, body: task)
+      el Panel, key: "task" + n, primaryPanel: 0 == i, heading: @headingFor(n), body: task)
 
   renderButton: ->
     fullRow(marginBottom: 20,

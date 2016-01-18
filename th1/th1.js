@@ -178,6 +178,10 @@ Game = React.createClass({displayName: "Game",
       body: this.state.position
     });
   },
+  Headings: ['', 'Just a bit of warm up...', "Horny, aren't you? Now insert the dildo into your throat:", "Deepthroating time!", "Let's play with your spit now..."],
+  headingFor: function(n) {
+    return "Task " + n + " — " + this.Headings[n];
+  },
   renderTasks: function() {
     return _.map(this.state.tasks, (function(_this) {
       return function(task, i) {
@@ -186,7 +190,7 @@ Game = React.createClass({displayName: "Game",
         return el(Panel, {
           key: "task" + n,
           primaryPanel: 0 === i,
-          heading: 'Task ' + n,
+          heading: _this.headingFor(n),
           body: task
         });
       };
