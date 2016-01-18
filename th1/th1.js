@@ -126,7 +126,7 @@ TimerButton = React.createClass({displayName: "TimerButton",
 
 Spit = ['Take all that spit and grease it on your dick and balls', 'Sit down, drool the spit and try to take it back to your mouth without using your hands. A little tip: Image you are drinking with your straw', 'Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. A little tip: Image you are drinking with your straw', 'Get on your back with your neck on the border of your bed and spit it all over your face', 'Get on your back with your neck on the border of your bed and spit it all over your face, make sure you get some spit into your eyes', 'Take some spit and drool it on your open eyes with your hand'];
 
-Fuck = ['Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 3s. Do this 3 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 5s. Do this 3 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 8s. Do this 5 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 10s. Do this 7 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 20 times, fast, after that swallow your dildo and hold it for 10s. Do this 10 times in a row without a break', 'Ouch, get ready to get throated like a bitch. Fuck your mouth with your dildo, let it touch the back of your throat 5 times, fast, after that swallow your dildo and hold it for 15 seconds. Do this 20 times in a row without a break'];
+Fuck = ['Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 3 seconds. Do this 3 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 5 seconds. Do this 3 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 8 seconds. Do this 5 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 10 seconds. Do this 7 times in a row without a break', 'Fuck your mouth with your dildo, let it touch the back of your throat 20 times, fast, after that swallow your dildo and hold it for 10 seconds. Do this 10 times in a row without a break', 'Ouch, get ready to get throated like a bitch. Fuck your mouth with your dildo, let it touch the back of your throat 5 times, fast, after that swallow your dildo and hold it for 15 seconds. Do this 20 times in a row without a break'];
 
 Game = React.createClass({displayName: "Game",
   getInitialState: function() {
@@ -146,19 +146,25 @@ Game = React.createClass({displayName: "Game",
   randomTask: function(num) {
     var l, tasks;
     tasks = this.tasks()[num];
-    if (this.props.hardcore) {
-      l = tasks.length - 1;
-      return tasks[_.max([_.random(l), _.random(l)])];
-    } else {
-      return _.sample(tasks);
+    l = tasks.length - 1;
+    return tasks[this.withDifficulty(function() {
+      return _.random(l);
+    })];
+  },
+  withDifficulty: function(fun) {
+    switch (this.props.difficulty) {
+      case 'light':
+        return _.min([fun(), fun()]);
+      case 'hardcore':
+        return _.max([fun(), fun()]);
+      default:
+        return fun();
     }
   },
   d16: function() {
-    if (this.props.hardcore) {
-      return _.max([_.random(1, 6), _.random(1, 6)]);
-    } else {
+    return this.withDifficulty(function() {
       return _.random(1, 6);
-    }
+    });
   },
   timerTask: function() {
     var d3, secs;
@@ -187,7 +193,7 @@ Game = React.createClass({displayName: "Game",
     var m, secs, task, timerTask;
     timerTask = this.state.nextTask === this.deepthroatingTaskNum();
     task = timerTask ? "Hold your dildo in your throat for " + (this.timerTask()) + " seconds." : this.randomTask(this.state.nextTask);
-    if (m = task.match(/(\d+) seconds/)) {
+    if (this.state.nextTask < 4 && (m = task.match(/(\d+) seconds/))) {
       secs = +m[1];
     }
     this.speak(task);
@@ -256,16 +262,22 @@ TH1Main = React.createClass({displayName: "TH1Main",
     return {
       started: false,
       speechEnabled: this.isSpeechEnabled(),
-      hardcore: this.isHardcore()
+      difficulty: this.initialDifficulty()
     };
   },
   isSpeechEnabled: function() {
     var ref1;
     return ((ref1 = window.localStorage) != null ? ref1.speechEnabled : void 0) === 'true';
   },
-  isHardcore: function() {
-    var ref1;
-    return top.location.search.match(/[?&]hardcore=1/) || ((ref1 = window.localStorage) != null ? ref1.hardcore : void 0) === 'true';
+  initialDifficulty: function() {
+    var m, ref1;
+    if (m = top.location.search.match(/[?&]difficulty=([012])/)) {
+      return ['light', 'normal', 'hardcore'][+m[1]];
+    } else if (m = top.location.search.match(/[?&]hardcore=1/)) {
+      return 'hardcore';
+    } else {
+      return ((ref1 = window.localStorage) != null ? ref1.difficulty : void 0) || 'normal';
+    }
   },
   startAnother: function() {
     return this.setState({
@@ -287,14 +299,13 @@ TH1Main = React.createClass({displayName: "TH1Main",
       speechEnabled: speechEnabled
     });
   },
-  toggleHardcore: function() {
-    var hardcore, ref1;
-    hardcore = !this.state.hardcore;
+  setDifficulty: function(diff) {
+    var ref1;
     if ((ref1 = window.localStorage) != null) {
-      ref1.hardcore = hardcore;
+      ref1.difficulty = diff;
     }
     return this.setState({
-      hardcore: hardcore
+      difficulty: diff
     });
   },
   render: function() {
@@ -303,7 +314,7 @@ TH1Main = React.createClass({displayName: "TH1Main",
     }, this.renderHeadline(), this.renderIntroduction(), this.state.started ? el(Game, {
       startAnother: this.startAnother,
       speechEnabled: this.state.speechEnabled,
-      hardcore: this.state.hardcore,
+      difficulty: this.state.difficulty,
       mode: this.state.started
     }) : this.renderStartGameButton(), this.renderFooter());
   },
@@ -326,11 +337,38 @@ TH1Main = React.createClass({displayName: "TH1Main",
       type: 'checkbox',
       checked: this.state.speechEnabled,
       onChange: this.toggleSpeech
-    }), ' Enable speech  '), label({}, input({
-      type: 'checkbox',
-      checked: this.state.hardcore,
-      onChange: this.toggleHardcore
-    }), ' Hardcore mode')), div({
+    }), ' Enable speech  '), div({
+      style: {
+        display: 'inline-block'
+      }
+    }, ' Mode: ', label({}, input({
+      type: 'radio',
+      name: 'difficulty',
+      checked: this.state.difficulty === 'light',
+      onChange: (function(_this) {
+        return function() {
+          return _this.setDifficulty('light');
+        };
+      })(this)
+    }), ' Light '), label({}, input({
+      type: 'radio',
+      name: 'difficulty',
+      checked: this.state.difficulty === 'normal',
+      onChange: (function(_this) {
+        return function() {
+          return _this.setDifficulty('normal');
+        };
+      })(this)
+    }), ' Normal '), label({}, input({
+      type: 'radio',
+      name: 'difficulty',
+      checked: this.state.difficulty === 'hardcore',
+      onChange: (function(_this) {
+        return function() {
+          return _this.setDifficulty('hardcore');
+        };
+      })(this)
+    }), ' Hardcore '))), div({
       className: "col-xs-6"
     }, p({
       className: 'pull-right text-right lead'

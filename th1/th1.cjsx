@@ -77,11 +77,11 @@ Spit = [ 'Take all that spit and grease it on your dick and balls',
          'Get on your back with your neck on the border of your bed and spit it all over your face, make sure you get some spit into your eyes',
          'Take some spit and drool it on your open eyes with your hand', ]
 
-Fuck = [ 'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 3s. Do this 3 times in a row without a break',
-         'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 5s. Do this 3 times in a row without a break',
-         'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 8s. Do this 5 times in a row without a break',
-         'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 10s. Do this 7 times in a row without a break',
-         'Fuck your mouth with your dildo, let it touch the back of your throat 20 times, fast, after that swallow your dildo and hold it for 10s. Do this 10 times in a row without a break',
+Fuck = [ 'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 3 seconds. Do this 3 times in a row without a break',
+         'Fuck your mouth with your dildo, let it touch the back of your throat 10 times, fast, after that swallow your dildo and hold it for 5 seconds. Do this 3 times in a row without a break',
+         'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 8 seconds. Do this 5 times in a row without a break',
+         'Fuck your mouth with your dildo, let it touch the back of your throat 15 times, fast, after that swallow your dildo and hold it for 10 seconds. Do this 7 times in a row without a break',
+         'Fuck your mouth with your dildo, let it touch the back of your throat 20 times, fast, after that swallow your dildo and hold it for 10 seconds. Do this 10 times in a row without a break',
          'Ouch, get ready to get throated like a bitch. Fuck your mouth with your dildo, let it touch the back of your throat 5 times, fast, after that swallow your dildo and hold it for 15 seconds. Do this 20 times in a row without a break',]
 
 
@@ -157,17 +157,20 @@ Game = React.createClass
 
   randomTask: (num) ->
     tasks = @tasks()[num]
-    if @props.hardcore
-      l = tasks.length - 1
-      tasks[_.max([_.random(l),_.random(l)])]
-    else
-      _.sample(tasks)
+    l = tasks.length - 1
+    tasks[@withDifficulty -> _.random(l)]
+
+  withDifficulty: (fun) ->
+    switch @props.difficulty
+      when 'light'
+        _.min([fun(), fun()])
+      when 'hardcore'
+        _.max([fun(), fun()])
+      else
+        fun()
 
   d16: ->
-    if @props.hardcore
-      _.max([_.random(1, 6),_.random(1, 6)])
-    else
-      _.random(1, 6)
+    @withDifficulty -> _.random(1, 6)
 
   timerTask: ->
     d3 = @d16()
@@ -191,7 +194,7 @@ Game = React.createClass
       "Hold your dildo in your throat for #{@timerTask()} seconds."
     else
       @randomTask(@state.nextTask)
-    secs = +m[1] if m = task.match(/(\d+) seconds/)
+    secs = +m[1] if @state.nextTask < 4 and m = task.match(/(\d+) seconds/)
     @speak(task)
     @setState(
       nextTask: 1 + @state.nextTask,
@@ -247,13 +250,18 @@ TH1Main = React.createClass
   getInitialState: ->
     started: false
     speechEnabled: @isSpeechEnabled()
-    hardcore: @isHardcore()
+    difficulty: @initialDifficulty()
 
   isSpeechEnabled: ->
     window.localStorage?.speechEnabled == 'true'
 
-  isHardcore: ->
-    top.location.search.match(/[?&]hardcore=1/) or window.localStorage?.hardcore == 'true'
+  initialDifficulty: ->
+    if m = top.location.search.match(/[?&]difficulty=([012])/)
+      ['light', 'normal', 'hardcore'][+m[1]]
+    else if m = top.location.search.match(/[?&]hardcore=1/)
+      'hardcore'
+    else
+      window.localStorage?.difficulty || 'normal'
 
   startAnother: ->
     @setState started: false
@@ -266,10 +274,9 @@ TH1Main = React.createClass
     window.localStorage?.speechEnabled = speechEnabled
     @setState speechEnabled: speechEnabled
 
-  toggleHardcore: ->
-    hardcore = not @state.hardcore
-    window.localStorage?.hardcore = hardcore
-    @setState hardcore: hardcore
+  setDifficulty: (diff) ->
+    window.localStorage?.difficulty = diff
+    @setState difficulty: diff
 
   render: ->
     div className: "container",
@@ -279,7 +286,7 @@ TH1Main = React.createClass
         el(Game,
           startAnother: @startAnother,
           speechEnabled: @state.speechEnabled,
-          hardcore: @state.hardcore,
+          difficulty: @state.difficulty,
           mode: @state.started)
       else
         @renderStartGameButton()
@@ -297,9 +304,17 @@ TH1Main = React.createClass
         label {},
           (input type: 'checkbox', checked: @state.speechEnabled, onChange: @toggleSpeech),
           ' Enable speech  '
-        label {},
-          (input type: 'checkbox', checked: @state.hardcore, onChange: @toggleHardcore),
-          ' Hardcore mode'
+        div style: {display: 'inline-block'},
+          ' Mode: '
+          label {},
+            (input type: 'radio', name: 'difficulty', checked: @state.difficulty == 'light', onChange: => @setDifficulty('light')),
+            ' Light '
+          label {},
+            (input type: 'radio', name: 'difficulty', checked: @state.difficulty == 'normal', onChange: => @setDifficulty('normal')),
+            ' Normal '
+          label {},
+            (input type: 'radio', name: 'difficulty', checked: @state.difficulty == 'hardcore', onChange: => @setDifficulty('hardcore')),
+            ' Hardcore '
       div className: "col-xs-6",
         p className: 'pull-right text-right lead',
           'Based on '
