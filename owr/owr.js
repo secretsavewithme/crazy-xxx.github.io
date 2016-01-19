@@ -3,18 +3,18 @@ var Duties, Game, Kinks, OWRMain, Roll, StartSelector, Twists, Xmoney, Ymoney, b
   slice = [].slice;
 
 d = function() {
-  return parseInt(Math.random() * 10);
+  return _.random(9);
 };
 
 d19 = function() {
-  return parseInt(1 + Math.random() * 9);
+  return _.random(1, 9);
 };
 
 Duties = ['[Choose 2 but only charge for cheaper one]', 'Suck for 5min', 'Suck for 10min', 'Suck for 5min, deepthroat every 30s', 'Deepthroat 20x', 'Deepthroat 40x', 'Deepthroat 10x in 1min', 'Deepthroat 20x in 90s, or deepthroat 100x', 'Suck for 5min, then deepthroat 20x', 'Suck for 10min, then deepthroat 40x'];
 
 Kinks = ['[Pick three]', 'Wear nippleclamps', 'Wear blindfold', 'Wear collar', 'Smear everything that comes out of your mouth on your face', 'After doing your duty, slap your face with the dildo 30 times', 'Spank your ass 50 times', 'Moan and beg for more', 'Wear nippleclamps & blindfold', 'Wear nippleclamps & collar'];
 
-Twists = ['Gangbang: X roll is cumulative', null, null, null, null, null, 'Cheap escape: do not collect money for this roll', 'He brings his friend: do double amount of work', 'His favorite bitch: do triple amount of work, get paid double', 'Your pimp comes around: give him half of your money'];
+Twists = ['Gangbang: X roll is cumulative', null, null, null, null, null, 'Cheap escape: do not collect money for this roll', 'He brings his friend: do double amount of work', 'His favorite bitch: do triple amount of work, get paid double', 'Your pimp comes around: give him half of your money', 'Trips: your roll is now (0,0,0). After that, your pimp collects all your money (restart with $0)!'];
 
 Xmoney = [1000, 20, 20, 30, 20, 35, 40, 70, 40, 55];
 
@@ -85,7 +85,7 @@ Roll = (function() {
     if (_.contains(res, 0)) {
       res = res.concat(this.y0);
     }
-    return res;
+    return _.uniq(res);
   };
 
   Roll.prototype.kink = function() {
@@ -100,7 +100,10 @@ Roll = (function() {
     if (this.x === this.y) {
       res.push(this.x);
     }
-    return _.compact(_.map(res, function(z) {
+    if (this.takesAll()) {
+      res.push(10);
+    }
+    return _.compact(_.map(_.uniq(res), function(z) {
       return Twists[z];
     }));
   };

@@ -5,8 +5,8 @@
 # √ a from param
 # - save defaults
 
-d = -> parseInt(Math.random() * 10)
-d19 = -> parseInt(1 + Math.random() * 9)
+d = -> _.random(9)
+d19 = -> _.random(1, 9)
 
 Duties = [
   '[Choose 2 but only charge for cheaper one]',
@@ -41,6 +41,7 @@ Twists = [
   'He brings his friend: do double amount of work', #7
   'His favorite bitch: do triple amount of work, get paid double', #8
   'Your pimp comes around: give him half of your money', #9
+  'Trips: your roll is now (0,0,0). After that, your pimp collects all your money (restart with $0)!', #10
 ]
 
 Xmoney = [1000, 20, 20, 30, 20, 35, 40, 70, 40, 55]
@@ -75,7 +76,7 @@ class Roll
     res = [@y]
     res.push(@x) if @x == @z
     res = res.concat(@y0) if _.contains(res, 0)
-    res
+    _.uniq(res)
 
   kink: ->
     _.map(@numKink(), (y) -> Kinks[y])
@@ -83,7 +84,8 @@ class Roll
   twist: ->
     res = [@z]
     res.push(@x) if @x == @y
-    _.compact(_.map(res, (z) -> Twists[z]))
+    res.push(10) if @takesAll()
+    _.compact(_.map(_.uniq(res), (z) -> Twists[z]))
 
   money: ->
     return 0 if 6 == @z
