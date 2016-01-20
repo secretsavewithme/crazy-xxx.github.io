@@ -52,7 +52,8 @@ StartSelector = React.createClass({
       className: 'input-group'
     }, input({
       type: 'number',
-      className: "form-control"
+      className: "form-control",
+      value: this.props.min
     }), div({
       className: 'input-group-addon'
     }, 'min'))), ' ', div({
@@ -61,7 +62,8 @@ StartSelector = React.createClass({
       className: 'input-group'
     }, input({
       type: 'number',
-      className: "form-control"
+      className: "form-control",
+      value: this.props.max
     }), div({
       className: 'input-group-addon'
     }, 'min'))), ' ', button({

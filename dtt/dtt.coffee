@@ -30,13 +30,13 @@ StartSelector = React.createClass
         div(className: "form-group",
           label({}, 'Min: '),
           div className: 'input-group',
-            input type: 'number', className: "form-control"
+            input type: 'number', className: "form-control", value: @props.min
             div className: 'input-group-addon', 'min')
         ' '
         div(className: "form-group",
           label({}, 'Max: '),
           div className: 'input-group',
-            input type: 'number', className: "form-control"
+            input type: 'number', className: "form-control", value: @props.max
             div className: 'input-group-addon', 'min')
         ' '
         button type: "submit", className: "btn btn-primary", 'Start'
