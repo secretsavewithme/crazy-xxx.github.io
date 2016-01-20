@@ -1,20 +1,42 @@
 { a, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
 el = React.createElement
 
-initialState =
-  gameParams:
-    type: 'random'
-    min: 5
-    max: 10
-    mins: 5
-    secs: 300
+gameParamsInitialState =
+  type: 'minutes'
+  min: 5
+  max: 10
+  minutes: 3
+  seconds: 300
 
-trainerLogic = (state = initialState, action) ->
-  state
+gameParams = (state = gameParamsInitialState, action) ->
+  switch action.type
+    when 'changeType'
+      _.assign({}, state, type: action.selected)
+    else
+      state
+
+trainerLogic = Redux.combineReducers({gameParams})
 
 store = Redux.createStore(trainerLogic)
 
+NumberSelector = React.createClass
+  label: ->
+    @props.label || 'Value'
+
+  unit: ->
+    if @props.type == 'seconds' then 's' else 'min'
+
+  render: ->
+    div(className: "form-group",
+      label({}, @label() + ': '),
+      div className: 'input-group',
+        input type: 'number', className: "form-control", value: @props.value
+        div className: 'input-group-addon', @unit())
+
 StartSelector = React.createClass
+  changeType: (e) ->
+    store.dispatch(type: 'changeType', selected: e.target.value)
+
   render: ->
     div {},
       p className: "lead",
@@ -26,19 +48,12 @@ StartSelector = React.createClass
             option(value: 'random',  'Random time'),
             option(value: 'minutes', 'Minutes'),
             option(value: 'seconds', 'Seconds'))
-        ' '
-        div(className: "form-group",
-          label({}, 'Min: '),
-          div className: 'input-group',
-            input type: 'number', className: "form-control", value: @props.min
-            div className: 'input-group-addon', 'min')
-        ' '
-        div(className: "form-group",
-          label({}, 'Max: '),
-          div className: 'input-group',
-            input type: 'number', className: "form-control", value: @props.max
-            div className: 'input-group-addon', 'min')
-        ' '
+
+        if 'random' == @props.type
+          el(MinMaxSelector, @props)
+        else
+          el(NumberSelector, type: @props.type, value: @props[@props.type])
+
         button type: "submit", className: "btn btn-primary", 'Start'
 
 
@@ -58,3 +73,5 @@ render = ->
 
 store.subscribe(render)
 render()
+
+store.subscribe(-> console.log 'current state', store.getState())
