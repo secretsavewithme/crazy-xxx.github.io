@@ -33,6 +33,12 @@ NumberSelector = React.createClass
         input type: 'number', className: "form-control", value: @props.value
         div className: 'input-group-addon', @unit())
 
+MinMaxSelector = React.createClass
+  render: ->
+    span {},
+      el(NumberSelector, type: 'Min', value: @props.min)
+      el(NumberSelector, type: 'Max', value: @props.max)
+
 StartSelector = React.createClass
   changeType: (e) ->
     store.dispatch(type: 'changeType', selected: e.target.value)
