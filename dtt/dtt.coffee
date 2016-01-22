@@ -7,11 +7,15 @@ gameParamsInitialState =
   max: 10
   minutes: 3
   seconds: 300
+  error: false
 
 make = (prop, val) ->
   obj = {}
   obj[prop] = val
   obj
+
+newState = (state, objs...) ->
+  _.assign({}, state, objs...)
 
 gameParamValid = (prop, val, state) ->
   return false unless _.isFinite(val) and +val > 0
@@ -19,21 +23,51 @@ gameParamValid = (prop, val, state) ->
     +val <= +state.max
   else if prop == 'max'
     +val >= +state.min
+  else if prop == 'random'
+    +state.min <= +state.max
   else
     true
 
 gameParams = (state = gameParamsInitialState, action) ->
   switch action.type
     when 'changeType'
-      _.assign({}, state, type: action.selected)
+      newState(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
     when 'changeVal'
-      _.assign({}, state, make(action.prop, action.val), {error: not gameParamValid(action.prop, action.val, state)})
+      newState(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
     else
       state
 
-trainerLogic = Redux.combineReducers({gameParams})
+calculateTargetTime = ->
+  params = store.getState().gameParams
+  switch params.type
+    when 'random'
+      _.random(params.min * 60, params.max * 60)
+    when 'minutes'
+      params.minutes * 60
+    when 'seconds'
+      params.seconds
+
+gameInitialState =
+  started: false
+
+game = (state = gameInitialState, action) ->
+  switch action.type
+    when 'startGame'
+      newState(state, started: true, target: calculateTargetTime())
+    else
+      state
+
+trainerLogic = Redux.combineReducers({gameParams, game})
 
 store = Redux.createStore(trainerLogic)
+
+
+Game = React.createClass
+  render: ->
+    div {},
+      "Target: " + @props.target
+
+
 
 NumberSelector = React.createClass
   label: ->
@@ -65,11 +99,15 @@ StartSelector = React.createClass
   handleChange: (e) ->
     store.dispatch(type: 'changeVal', prop: @props.type, val: e.target.value)
 
+  startGame: (e) ->
+    e.preventDefault()
+    store.dispatch(type: 'startGame')
+
   render: ->
     div {},
       p className: "lead",
         'The game is not started yet. Select training time and press Start.'
-      form className: "form-inline", onSubmit: @handleSubmit,
+      form className: "form-inline", onSubmit: @startGame,
         div(className: "form-group",
           label({}, 'Time: '),
           select className: "form-control", defaultValue: @props.type, onChange: @changeType, style: {width: 'auto'},
@@ -89,8 +127,8 @@ DTTMain = React.createClass
   render: ->
     div className: "container",
       h1({}, 'DT Trainer'),
-      if @props.started
-        el(Game)
+      if @props.game.started
+        el(Game, @props.game)
       else
         el(StartSelector, @props.gameParams)
 
