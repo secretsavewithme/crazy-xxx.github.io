@@ -2,10 +2,6 @@
 var DTTMain, Game, MinMaxSelector, NumberSelector, StartSelector, a, button, calculateTargetTime, div, el, form, game, gameInitialState, gameParamValid, gameParams, gameParamsInitialState, h1, h2, h3, h4, img, input, label, li, make, newState, option, p, ref, render, select, span, store, strong, timer, trainerLogic, ul,
   slice = [].slice;
 
-ref = React.DOM, a = ref.a, button = ref.button, div = ref.div, form = ref.form, img = ref.img, h1 = ref.h1, h2 = ref.h2, h3 = ref.h3, h4 = ref.h4, input = ref.input, label = ref.label, li = ref.li, option = ref.option, p = ref.p, select = ref.select, span = ref.span, strong = ref.strong, ul = ref.ul;
-
-el = React.createElement;
-
 gameParamsInitialState = {
   type: 'random',
   min: 5,
@@ -13,19 +9,6 @@ gameParamsInitialState = {
   minutes: 3,
   seconds: 300,
   error: false
-};
-
-make = function(prop, val) {
-  var obj;
-  obj = {};
-  obj[prop] = val;
-  return obj;
-};
-
-newState = function() {
-  var objs, state;
-  state = arguments[0], objs = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-  return _.assign.apply(_, [{}, state].concat(slice.call(objs)));
 };
 
 gameParamValid = function(prop, val, state) {
@@ -102,13 +85,6 @@ game = function(state, action) {
   }
 };
 
-trainerLogic = Redux.combineReducers({
-  gameParams: gameParams,
-  game: game
-});
-
-store = Redux.createStore(trainerLogic);
-
 timer = function() {
   game = store.getState().game;
   if (!game.started) {
@@ -126,24 +102,6 @@ timer = function() {
 };
 
 setInterval(timer, 1000);
-
-Game = React.createClass({
-  startCountdown: function() {
-    return store.dispatch({
-      type: 'startCountdown'
-    });
-  },
-  render: function() {
-    return div({}, this.props.countdown ? this.renderCountdown() : void 0, "Target: " + this.props.target, ' ', button({
-      type: "submit",
-      className: "btn btn-primary",
-      onClick: this.startCountdown
-    }, 'Press when ready'));
-  },
-  renderCountdown: function() {
-    return div({}, 'countdown: ' + this.props.countdown);
-  }
-});
 
 NumberSelector = React.createClass({
   label: function() {
@@ -252,6 +210,48 @@ StartSelector = React.createClass({
     }, 'Start')));
   }
 });
+
+Game = React.createClass({
+  startCountdown: function() {
+    return store.dispatch({
+      type: 'startCountdown'
+    });
+  },
+  render: function() {
+    return div({}, this.props.countdown ? this.renderCountdown() : void 0, "Target: " + this.props.target, ' ', button({
+      type: "submit",
+      className: "btn btn-primary",
+      onClick: this.startCountdown
+    }, 'Press when ready'));
+  },
+  renderCountdown: function() {
+    return div({}, 'countdown: ' + this.props.countdown);
+  }
+});
+
+ref = React.DOM, a = ref.a, button = ref.button, div = ref.div, form = ref.form, img = ref.img, h1 = ref.h1, h2 = ref.h2, h3 = ref.h3, h4 = ref.h4, input = ref.input, label = ref.label, li = ref.li, option = ref.option, p = ref.p, select = ref.select, span = ref.span, strong = ref.strong, ul = ref.ul;
+
+el = React.createElement;
+
+make = function(prop, val) {
+  var obj;
+  obj = {};
+  obj[prop] = val;
+  return obj;
+};
+
+newState = function() {
+  var objs, state;
+  state = arguments[0], objs = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+  return _.assign.apply(_, [{}, state].concat(slice.call(objs)));
+};
+
+trainerLogic = Redux.combineReducers({
+  gameParams: gameParams,
+  game: game
+});
+
+store = Redux.createStore(trainerLogic);
 
 DTTMain = React.createClass({
   render: function() {
