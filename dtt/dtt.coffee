@@ -13,7 +13,6 @@ trainerLogic = Redux.combineReducers({gameParams, game})
 
 store = Redux.createStore(trainerLogic)
 
-
 DTTMain = React.createClass
   render: ->
     div className: "container",

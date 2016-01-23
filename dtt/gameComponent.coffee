@@ -5,6 +5,7 @@ Game = React.createClass
   render: ->
     div {},
       @renderCountdown() if @props.countdown
+      @renderTasks()
       "Target: " + @props.target
       ' '
       button type: "submit", className: "btn btn-primary", onClick: @startCountdown, 'Press when ready'
@@ -12,3 +13,8 @@ Game = React.createClass
   renderCountdown: ->
     div {},
       'countdown: ' + @props.countdown
+
+  renderTasks: ->
+    ul {},
+      _.map @props.tasks, (task) ->
+        li {}, task.desc
