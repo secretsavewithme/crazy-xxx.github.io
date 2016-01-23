@@ -60,11 +60,12 @@ calculateTargetTime = function() {
 
 gameInitialState = {
   started: false,
-  tasks: []
+  tasks: [],
+  elapsed: 0
 };
 
 game = function(state, action) {
-  var ref, rest, task;
+  var elapsed, ref, rest, task;
   if (state == null) {
     state = gameInitialState;
   }
@@ -84,10 +85,23 @@ game = function(state, action) {
         running: state.countdown === 1
       });
     case 'nextTask':
-      task = generateTask();
-      return dup(state, {
-        tasks: [task].concat(state.tasks)
-      });
+      elapsed = _.reduce(state.tasks, (function(sum, task) {
+        return sum + task.elapsed;
+      }), 0);
+      if (elapsed < state.target) {
+        task = generateTask();
+        return dup(state, {
+          tasks: [task].concat(state.tasks),
+          elapsed: elapsed
+        });
+      } else {
+        return dup(state, {
+          finished: true,
+          runnning: false,
+          elapsed: elapsed
+        });
+      }
+      break;
     case 'decreaseTask':
       ref = state.tasks, task = ref[0], rest = 2 <= ref.length ? slice.call(ref, 1) : [];
       task = dup(task, {
@@ -234,17 +248,20 @@ StartSelector = React.createClass({
 });
 
 Game = React.createClass({
+  componentWillMount: function() {
+    return console.log('componentWillMount');
+  },
   startCountdown: function() {
     return store.dispatch({
       type: 'startCountdown'
     });
   },
   render: function() {
-    return div({}, this.renderCountdown(), this.renderTasks(), "Target: " + this.props.target, ' ', button({
+    return div({}, "Target: " + this.props.target, " Elapsed: " + this.props.elapsed, this.props.finished ? this.renderFinished() : void 0, this.renderCountdown(), this.renderTasks(), !this.props.running ? button({
       type: "submit",
       className: "btn btn-primary",
       onClick: this.startCountdown
-    }, 'Press when ready'));
+    }, 'Press when ready') : void 0);
   },
   renderCountdown: function() {
     return div({}, this.props.countdown ? 'countdown: ' + this.props.countdown : 0 === this.props.countdown && !this.props.tasks.length ? 'READY!' : void 0);
@@ -253,6 +270,9 @@ Game = React.createClass({
     return ul({}, _.map(this.props.tasks, function(task) {
       return li({}, task.desc + " " + task.time);
     }));
+  },
+  renderFinished: function() {
+    return h1({}, 'Finished!');
   }
 });
 
@@ -311,9 +331,10 @@ Tasks = [
 generateTask = function() {
   var task, time;
   task = _.sample(Tasks);
-  time = _.random(task.min, task.max);
+  time = _.random(task.min, task.min);
   return dup(task, {
-    time: time
+    time: time,
+    elapsed: time
   });
 };
 

@@ -1,6 +1,7 @@
 gameInitialState =
   started: false
   tasks: []
+  elapsed: 0
 
 game = (state = gameInitialState, action) ->
   switch action.type
@@ -11,8 +12,12 @@ game = (state = gameInitialState, action) ->
     when 'decreaseCountdown'
       dup(state, countdown: state.countdown - 1, running: state.countdown == 1)
     when 'nextTask'
-      task = generateTask()
-      dup(state, tasks: [task].concat(state.tasks))
+      elapsed = _.reduce(state.tasks, ((sum, task) -> sum + task.elapsed), 0)
+      if elapsed < state.target
+        task = generateTask()
+        dup(state, tasks: [task].concat(state.tasks), elapsed: elapsed)
+      else
+        dup(state, finished: true, runnning: false, elapsed: elapsed)
     when 'decreaseTask'
       [task, rest...] = state.tasks
       task = dup(task, time: task.time - 1)
