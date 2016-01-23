@@ -54,6 +54,10 @@ game = (state = gameInitialState, action) ->
   switch action.type
     when 'startGame'
       newState(state, started: true, target: calculateTargetTime())
+    when 'startCountdown'
+      newState(state, countdown: 3)
+    when 'decreaseCountdown'
+      newState(state, countdown: state.countdown - 1)
     else
       state
 
@@ -61,13 +65,30 @@ trainerLogic = Redux.combineReducers({gameParams, game})
 
 store = Redux.createStore(trainerLogic)
 
+timer = ->
+  game = store.getState().game
+  return unless game.started
+  if game.countdown
+    store.dispatch(type: 'decreaseCountdown')
+  else
+    store.dispatch(type: 'nextTask')
+
+setInterval(timer, 1000)
 
 Game = React.createClass
+  startCountdown: ->
+    store.dispatch(type: 'startCountdown')
+
   render: ->
     div {},
+      @renderCountdown() if @props.countdown
       "Target: " + @props.target
+      ' '
+      button type: "submit", className: "btn btn-primary", onClick: @startCountdown, 'Press when ready'
 
-
+  renderCountdown: ->
+    div {},
+      'countdown: ' + @props.countdown
 
 NumberSelector = React.createClass
   label: ->
@@ -83,6 +104,7 @@ NumberSelector = React.createClass
         input type: 'number', className: "form-control", value: @props.value, onChange: @props.onChange, step: 'any', min: 0
         div className: 'input-group-addon', @unit())
 
+
 MinMaxSelector = React.createClass
   handleChange: (fld, e) ->
     store.dispatch(type: 'changeVal', prop: fld, val: e.target.value)
@@ -91,6 +113,7 @@ MinMaxSelector = React.createClass
     span {},
       el(NumberSelector, label: 'Min', value: @props.min, onChange: @handleChange.bind(@, 'min'), hasError: @props.error)
       el(NumberSelector, label: 'Max', value: @props.max, onChange: @handleChange.bind(@, 'max'), hasError: @props.error)
+
 
 StartSelector = React.createClass
   changeType: (e) ->
@@ -101,7 +124,7 @@ StartSelector = React.createClass
 
   startGame: (e) ->
     e.preventDefault()
-    store.dispatch(type: 'startGame')
+    store.dispatch(type: 'startGame') unless @props.error
 
   render: ->
     div {},
@@ -120,7 +143,7 @@ StartSelector = React.createClass
         else
           el(NumberSelector, type: @props.type, value: @props[@props.type], onChange: @handleChange, hasError: @props.error)
 
-        button type: "submit", className: "btn btn-primary", 'Start'
+        button type: "submit", className: "btn btn-primary", disabled: @props.error, 'Start'
 
 
 DTTMain = React.createClass
@@ -140,4 +163,4 @@ render = ->
 store.subscribe(render)
 render()
 
-store.subscribe(-> console.log 'current state', store.getState())
+store.subscribe(-> console.log 'current state', JSON.stringify(store.getState()))
