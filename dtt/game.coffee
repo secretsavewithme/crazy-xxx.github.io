@@ -5,14 +5,18 @@ gameInitialState =
 game = (state = gameInitialState, action) ->
   switch action.type
     when 'startGame'
-      newState(state, started: true, target: calculateTargetTime())
+      dup(state, started: true, target: calculateTargetTime())
     when 'startCountdown'
-      newState(state, countdown: 3)
+      dup(state, countdown: 1)
     when 'decreaseCountdown'
-      newState(state, countdown: state.countdown - 1, running: state.countdown == 1)
+      dup(state, countdown: state.countdown - 1, running: state.countdown == 1)
     when 'nextTask'
       task = generateTask()
-      newState(state, tasks: [task].concat(state.tasks))
+      dup(state, tasks: [task].concat(state.tasks))
+    when 'decreaseTask'
+      [task, rest...] = state.tasks
+      task = dup(task, time: task.time - 1)
+      dup(state, tasks: [task].concat(rest))
     else
       state
 
@@ -22,6 +26,9 @@ timer = ->
   if game.countdown
     store.dispatch(type: 'decreaseCountdown')
   else if game.running
-    store.dispatch(type: 'nextTask')
+    if 0 == game.tasks.length or 0 == game.tasks[0].time
+      store.dispatch(type: 'nextTask')
+    else
+      store.dispatch(type: 'decreaseTask')
 
 setInterval(timer, 1000)

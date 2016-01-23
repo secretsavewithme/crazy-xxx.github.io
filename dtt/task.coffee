@@ -14,4 +14,6 @@ Tasks = [
 ]
 
 generateTask = ->
-  _.sample Tasks
+  task = _.sample(Tasks)
+  time = _.random(task.min, task.max)
+  dup(task, time: time)

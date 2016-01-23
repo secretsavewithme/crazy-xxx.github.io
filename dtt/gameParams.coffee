@@ -20,9 +20,9 @@ gameParamValid = (prop, val, state) ->
 gameParams = (state = gameParamsInitialState, action) ->
   switch action.type
     when 'changeType'
-      newState(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
+      dup(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
     when 'changeVal'
-      newState(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
+      dup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
     else
       state
 

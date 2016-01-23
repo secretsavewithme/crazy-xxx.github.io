@@ -4,7 +4,7 @@ Game = React.createClass
 
   render: ->
     div {},
-      @renderCountdown() if @props.countdown
+      @renderCountdown()
       @renderTasks()
       "Target: " + @props.target
       ' '
@@ -12,9 +12,13 @@ Game = React.createClass
 
   renderCountdown: ->
     div {},
-      'countdown: ' + @props.countdown
+      if @props.countdown
+        'countdown: ' + @props.countdown
+      else if 0 == @props.countdown and not @props.tasks.length
+        'READY!'
+
 
   renderTasks: ->
     ul {},
       _.map @props.tasks, (task) ->
-        li {}, task.desc
+        li {}, task.desc+" "+task.time

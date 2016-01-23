@@ -6,7 +6,7 @@ make = (prop, val) ->
   obj[prop] = val
   obj
 
-newState = (state, objs...) ->
+dup = (state, objs...) ->
   _.assign({}, state, objs...)
 
 trainerLogic = Redux.combineReducers({gameParams, game})
