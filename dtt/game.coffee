@@ -14,7 +14,7 @@ game = (state = gameInitialState, action) ->
     when 'nextTask'
       elapsed = _.reduce(state.tasks, ((sum, task) -> sum + task.elapsed), 0)
       if elapsed < state.target
-        task = generateTask()
+        task = generateTask(state.tasks[0], state.target - elapsed)
         dup(state, tasks: [task].concat(state.tasks), elapsed: elapsed)
       else
         dup(state, finished: true, runnning: false, elapsed: elapsed)

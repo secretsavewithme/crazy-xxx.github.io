@@ -32,7 +32,7 @@ calculateTargetTime = ->
     when 'random'
       _.random(params.min * 60, params.max * 60)
     when 'minutes'
-      params.minutes * 60
+      +params.minutes * 60
     when 'seconds'
-      params.seconds
+      +params.seconds
 

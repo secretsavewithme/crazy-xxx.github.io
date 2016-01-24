@@ -1,6 +1,8 @@
 { a, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM
 el = React.createElement
 
+local = !top.location.hostname
+
 make = (prop, val) ->
   obj = {}
   obj[prop] = val
@@ -30,4 +32,4 @@ render = ->
 store.subscribe(render)
 render()
 
-#store.subscribe(-> console.log 'current state', JSON.stringify(store.getState()))
+store.subscribe(-> console.log 'current state', JSON.stringify(store.getState())) if local

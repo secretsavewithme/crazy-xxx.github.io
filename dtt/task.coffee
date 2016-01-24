@@ -13,7 +13,8 @@ Tasks = [
   {desc: 'moan like a whore', min: 5, max: 15},
 ]
 
-generateTask = ->
-  task = _.sample(Tasks)
-  time = _.random(task.min, task.max)
+generateTask = (lastTask, maxTime) ->
+  task = _.sample(Tasks) until task and task.desc != lastTask?.desc
+  max = if local then task.min else task.max
+  time = _.min([_.random(task.min, max), maxTime])
   dup(task, time: time, elapsed: time)
