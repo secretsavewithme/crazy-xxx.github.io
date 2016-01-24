@@ -1,4 +1,4 @@
-{ a, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
+{ a, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM
 el = React.createElement
 
 make = (prop, val) ->
@@ -16,7 +16,7 @@ store = Redux.createStore(trainerLogic)
 DTTMain = React.createClass
   render: ->
     div className: "container",
-      h1({}, 'DT Trainer'),
+      h1({}, 'Deepthroat Trainer'),
       if @props.game.started
         el(Game, @props.game)
       else
@@ -30,4 +30,4 @@ render = ->
 store.subscribe(render)
 render()
 
-store.subscribe(-> console.log 'current state', JSON.stringify(store.getState()))
+#store.subscribe(-> console.log 'current state', JSON.stringify(store.getState()))

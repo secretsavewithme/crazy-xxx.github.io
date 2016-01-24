@@ -8,7 +8,7 @@ game = (state = gameInitialState, action) ->
     when 'startGame'
       dup(state, started: true, target: calculateTargetTime())
     when 'startCountdown'
-      dup(state, countdown: 1)
+      dup(state, countdown: 2)
     when 'decreaseCountdown'
       dup(state, countdown: state.countdown - 1, running: state.countdown == 1)
     when 'nextTask'
@@ -22,6 +22,8 @@ game = (state = gameInitialState, action) ->
       [task, rest...] = state.tasks
       task = dup(task, time: task.time - 1)
       dup(state, tasks: [task].concat(rest))
+    when 'startAnother'
+      gameInitialState
     else
       state
 
