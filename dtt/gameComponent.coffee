@@ -18,6 +18,9 @@ Game = React.createClass
     else
       'Get ready...'
 
+  taskDesc: (task) ->
+    "#{task.desc} (#{task.elapsed}s)" # #{task.diff}"
+
   renderTasks: ->
     [task, tasks...] = @props.tasks
     if task
@@ -25,10 +28,10 @@ Game = React.createClass
         @renderHeading('Remaining time: ' + task.time)
         div className: 'panel-body',
           p className: 'lead',
-            strong {}, "#{task.desc} (#{task.elapsed}s)"
+            strong {}, @taskDesc(task)
         ul className: 'list-group',
-          _.map tasks, (task) ->
-            li className: 'list-group-item text-muted', "#{task.desc} (#{task.elapsed}s)"
+          _.map tasks, (task) =>
+            li className: 'list-group-item text-muted', @taskDesc(task)
     else
       div className: 'panel panel-primary',
         @renderHeading(@countDownText())

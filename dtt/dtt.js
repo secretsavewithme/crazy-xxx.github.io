@@ -89,7 +89,7 @@ game = function(state, action) {
         return sum + task.elapsed;
       }), 0);
       if (elapsed < state.target) {
-        task = generateTask(state.tasks[0], state.target - elapsed);
+        task = generateTask(state.tasks[0], state.target, elapsed);
         return dup(state, {
           tasks: [task].concat(state.tasks),
           elapsed: elapsed
@@ -274,6 +274,9 @@ Game = React.createClass({
       return 'Get ready...';
     }
   },
+  taskDesc: function(task) {
+    return task.desc + " (" + task.elapsed + "s)";
+  },
   renderTasks: function() {
     var ref, task, tasks;
     ref = this.props.tasks, task = ref[0], tasks = 2 <= ref.length ? slice.call(ref, 1) : [];
@@ -284,13 +287,15 @@ Game = React.createClass({
         className: 'panel-body'
       }, p({
         className: 'lead'
-      }, strong({}, task.desc + " (" + task.elapsed + "s)"))), ul({
+      }, strong({}, this.taskDesc(task)))), ul({
         className: 'list-group'
-      }, _.map(tasks, function(task) {
-        return li({
-          className: 'list-group-item text-muted'
-        }, task.desc + " (" + task.elapsed + "s)");
-      })));
+      }, _.map(tasks, (function(_this) {
+        return function(task) {
+          return li({
+            className: 'list-group-item text-muted'
+          }, _this.taskDesc(task));
+        };
+      })(this))));
     } else {
       return div({
         className: 'panel panel-primary'
@@ -323,61 +328,81 @@ Tasks = [
   {
     desc: 'lick it with your tongue',
     min: 10,
-    max: 30
-  }, {
-    desc: 'suck it with your mouth',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'fuck your open mouth',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'stroke it with your hand',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'deepthroat on it',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'gag on it',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'fuck your throat',
-    min: 10,
-    max: 30
-  }, {
-    desc: 'keep it in your throat',
-    min: 3,
-    max: 10
-  }, {
-    desc: 'go deep on it',
-    min: 3,
-    max: 10
-  }, {
-    desc: 'slap your face',
-    min: 5,
-    max: 15
-  }, {
-    desc: 'wipe the spit on your face',
-    min: 5,
-    max: 15
+    max: 30,
+    diff: 0
   }, {
     desc: 'moan like a whore',
     min: 5,
-    max: 15
+    max: 15,
+    diff: 0
+  }, {
+    desc: 'stroke it with your hand',
+    min: 10,
+    max: 30,
+    diff: 0
+  }, {
+    desc: 'suck it with your mouth',
+    min: 10,
+    max: 30,
+    diff: 1
+  }, {
+    desc: 'wipe the spit on your face',
+    min: 5,
+    max: 15,
+    diff: 1
+  }, {
+    desc: 'fuck your open mouth',
+    min: 10,
+    max: 30,
+    diff: 2
+  }, {
+    desc: 'deepthroat on it',
+    min: 10,
+    max: 30,
+    diff: 2
+  }, {
+    desc: 'go deep on it',
+    min: 3,
+    max: 10,
+    diff: 2
+  }, {
+    desc: 'slap your face',
+    min: 5,
+    max: 15,
+    diff: 2
+  }, {
+    desc: 'gag on it',
+    min: 10,
+    max: 30,
+    diff: 3
+  }, {
+    desc: 'fuck your throat',
+    min: 10,
+    max: 30,
+    diff: 3
+  }, {
+    desc: 'keep it in your throat',
+    min: 3,
+    max: 10,
+    diff: 3
   }
 ];
 
-generateTask = function(lastTask, maxTime) {
-  var max, task, time;
-  while (!(task && task.desc !== (lastTask != null ? lastTask.desc : void 0))) {
+generateTask = function(lastTask, target, elapsed) {
+  var i, max, prefDiff, task, time;
+  prefDiff = Math.floor(5 * elapsed / target);
+  i = 0;
+  while (true) {
     task = _.sample(Tasks);
+    if (Math.abs(task.diff - prefDiff) > i++) {
+      continue;
+    }
+    if (task.desc !== (lastTask != null ? lastTask.desc : void 0)) {
+      break;
+    }
   }
   max = local ? task.min : task.max;
-  time = _.min([_.random(task.min, max), maxTime]);
+  time = _.min([_.random(task.min, max), target - elapsed]);
   return dup(task, {
     time: time,
     elapsed: time
