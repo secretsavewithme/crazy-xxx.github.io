@@ -1,10 +1,16 @@
+local = !top.location.hostname
+
+isSpeechEnabled = ->
+  window.localStorage?.speechEnabled == 'true'
+
 gameParamsInitialState =
-  type: 'random'
+  type: if local then 'seconds' else 'random'
   min: 5
   max: 10
-  minutes: 3
-  seconds: 300
+  minutes: if local then 1 else 3
+  seconds: if local then 30 else 300
   error: false
+  speechEnabled: isSpeechEnabled()
 
 isGtZero = (val) -> _.isFinite(val) and +val > 0
 
@@ -28,6 +34,10 @@ gameParams = (state = gameParamsInitialState, action) ->
       dup(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
     when 'changeVal'
       dup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
+    when 'toggleSpeech'
+      speechEnabled = not state.speechEnabled
+      window.localStorage?.speechEnabled = speechEnabled
+      dup(state, speechEnabled: speechEnabled)
     else
       state
 

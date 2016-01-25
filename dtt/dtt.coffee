@@ -1,8 +1,6 @@
 { a, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM
 el = React.createElement
 
-local = !top.location.hostname
-
 make = (prop, val) ->
   obj = {}
   obj[prop] = val
@@ -33,3 +31,9 @@ store.subscribe(render)
 render()
 
 store.subscribe(-> console.log 'current state', JSON.stringify(store.getState())) if local
+
+speak = (task) ->
+  # console.log 'still playing', responsiveVoice.isPlaying()
+  # console.log 'speak:', task
+  responsiveVoice.speak(task, "UK English Female", rate: 0.8) if store.getState().gameParams.speechEnabled
+  task

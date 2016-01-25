@@ -14,9 +14,11 @@ Game = React.createClass
 
   countDownText: ->
     if @props.countdown or 0 == @props.countdown and not @props.tasks.length
-      "Ready in #{@props.countdown + 1}..."
+      cntdown = 1 + @props.countdown
+      speak(if 3 == cntdown then "Ready in #{cntdown}" else ""+cntdown)
+      "Ready in #{cntdown}..."
     else
-      'Get ready...'
+      speak('Get ready...')
 
   taskDesc: (task) ->
     "#{task.desc} (#{task.elapsed}s)" # #{task.diff}"
@@ -47,5 +49,5 @@ Game = React.createClass
   renderFinished: ->
     div {},
       h2 {},
-        "Congratulations! You completed #{@props.elapsed} seconds of training!"
+        speak("Congratulations! You completed #{@props.elapsed} seconds of training!")
       button className: "btn btn-success btn-lg center-block", style: {marginBottom: 20}, onClick: @startAnother, 'Start another training'

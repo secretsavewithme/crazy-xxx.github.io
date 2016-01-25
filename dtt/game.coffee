@@ -15,9 +15,10 @@ game = (state = gameInitialState, action) ->
       elapsed = _.reduce(state.tasks, ((sum, task) -> sum + task.elapsed), 0)
       if elapsed < state.target
         task = generateTask(state.tasks[0], state.target, elapsed)
+        speak("#{task.desc} for #{task.time} seconds")
         dup(state, tasks: [task].concat(state.tasks), elapsed: elapsed)
       else
-        dup(state, finished: true, runnning: false, elapsed: elapsed)
+        dup(state, finished: true, running: false, elapsed: elapsed)
     when 'decreaseTask'
       [task, rest...] = state.tasks
       task = dup(task, time: task.time - 1)
@@ -27,10 +28,12 @@ game = (state = gameInitialState, action) ->
     else
       state
 
+wait = 0
 timer = ->
   game = store.getState().game
   return unless game.started
-  if game.countdown
+  if game.countdown and (not responsiveVoice.isPlaying() or wait++ > 1) # kludge to avoid missing countdown
+    wait = 0
     store.dispatch(type: 'decreaseCountdown')
   else if game.running
     if 0 == game.tasks.length or 0 == game.tasks[0].time
