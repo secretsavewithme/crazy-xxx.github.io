@@ -445,7 +445,7 @@ Tasks = [
   }, {
     desc: 'gag on it',
     min: 10,
-    max: 30,
+    max: 20,
     diff: 3
   }, {
     desc: 'fuck your throat',
