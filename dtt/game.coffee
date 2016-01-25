@@ -15,7 +15,7 @@ game = (state = gameInitialState, action) ->
       elapsed = _.reduce(state.tasks, ((sum, task) -> sum + task.elapsed), 0)
       if elapsed < state.target
         task = generateTask(state.tasks[0], state.target, elapsed)
-        speak("#{task.desc} for #{task.time} seconds")
+        tellTask(task)
         dup(state, tasks: [task].concat(state.tasks), elapsed: elapsed)
       else
         dup(state, finished: true, running: false, elapsed: elapsed)
@@ -27,6 +27,13 @@ game = (state = gameInitialState, action) ->
       gameInitialState
     else
       state
+
+tellTask = (task) ->
+  speak(
+    if store.getState().gameParams.tellTime
+      "#{task.desc} for #{task.time} seconds"
+    else
+      task.desc)
 
 wait = 0
 timer = ->

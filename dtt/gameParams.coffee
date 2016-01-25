@@ -3,6 +3,9 @@ local = !top.location.hostname
 isSpeechEnabled = ->
   window.localStorage?.speechEnabled == 'true'
 
+isTellTimeEnabled = ->
+  window.localStorage?.tellTime == 'true'
+
 gameParamsInitialState =
   type: if local then 'seconds' else 'random'
   min: 5
@@ -11,6 +14,7 @@ gameParamsInitialState =
   seconds: if local then 30 else 300
   error: false
   speechEnabled: isSpeechEnabled()
+  tellTime: isTellTimeEnabled()
 
 isGtZero = (val) -> _.isFinite(val) and +val > 0
 
@@ -38,6 +42,10 @@ gameParams = (state = gameParamsInitialState, action) ->
       speechEnabled = not state.speechEnabled
       window.localStorage?.speechEnabled = speechEnabled
       dup(state, speechEnabled: speechEnabled)
+    when 'toggleTellTime'
+      tellTime = not state.tellTime
+      window.localStorage?.tellTime = tellTime
+      dup(state, tellTime: tellTime)
     else
       state
 

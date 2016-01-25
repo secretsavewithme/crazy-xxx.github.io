@@ -34,9 +34,6 @@ StartSelector = React.createClass
     e.preventDefault()
     store.dispatch(type: 'startGame') unless @props.error
 
-  toggleSpeech: ->
-    store.dispatch(type: 'toggleSpeech')
-
   render: ->
     div {},
       p className: "lead",
@@ -56,7 +53,13 @@ StartSelector = React.createClass
 
         div className: "form-group",
           label {},
-            (input type: 'checkbox', checked: @props.speechEnabled, onChange: @toggleSpeech),
+            (input type: 'checkbox', checked: @props.speechEnabled, onChange: -> store.dispatch(type: 'toggleSpeech')),
             ' Enable speech  '
+
+        if @props.speechEnabled
+          div className: "form-group",
+            label {},
+              (input type: 'checkbox', checked: @props.tellTime, onChange: -> store.dispatch(type: 'toggleTellTime')),
+              ' Include task duration  '
 
         button type: "submit", className: "btn btn-primary", disabled: @props.error, 'Start'
