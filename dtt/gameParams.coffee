@@ -6,8 +6,13 @@ gameParamsInitialState =
   seconds: 300
   error: false
 
+isGtZero = (val) -> _.isFinite(val) and +val > 0
+
 gameParamValid = (prop, val, state) ->
-  return false unless _.isFinite(val) and +val > 0
+  if prop == 'random'
+    return false unless isGtZero(state.min) and isGtZero(state.max)
+  else
+    return false unless isGtZero(val)
   if prop == 'min'
     +val <= +state.max
   else if prop == 'max'
@@ -35,4 +40,3 @@ calculateTargetTime = ->
       +params.minutes * 60
     when 'seconds'
       +params.seconds
-
