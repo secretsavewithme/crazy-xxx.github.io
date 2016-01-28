@@ -1,22 +1,30 @@
 local = !top.location.hostname
 
-isSpeechEnabled = ->
-  window.localStorage?.speechEnabled == 'true'
-
-isTellTimeEnabled = ->
-  window.localStorage?.tellTime == 'true'
-
-gameParamsInitialState =
+gameParamsDefaults =
   type: if local then 'seconds' else 'random'
   min: 5
   max: 10
   minutes: if local then 1 else 3
   seconds: if local then 30 else 300
   error: false
-  speechEnabled: isSpeechEnabled()
-  tellTime: isTellTimeEnabled()
+  speechEnabled: true
+  tellTime: true
 
-isGtZero = (val) -> _.isFinite(val) and +val > 0
+parseQueryParams = ->
+  _.object(
+    _.map(
+      top.location.search.substr(1).split(/&/),
+      (kv) -> kv.split(/=/)))
+
+gameParamsInitialState = ->
+  _.assign(
+    {},
+    gameParamsDefaults,
+    JSON.parse(window.localStorage?.gameParams || "{}"),
+    parseQueryParams())
+
+isGtZero = (val) ->
+  _.isFinite(val) and +val > 0
 
 gameParamValid = (prop, val, state) ->
   if prop == 'random'
@@ -32,20 +40,21 @@ gameParamValid = (prop, val, state) ->
   else
     true
 
-gameParams = (state = gameParamsInitialState, action) ->
+saveDup = (objs...) ->
+  newState = dup(objs...)
+  window.localStorage?.gameParams = JSON.stringify(newState)
+  newState
+
+gameParams = (state = gameParamsInitialState(), action) ->
   switch action.type
     when 'changeType'
-      dup(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
+      saveDup(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
     when 'changeVal'
-      dup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
+      saveDup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
     when 'toggleSpeech'
-      speechEnabled = not state.speechEnabled
-      window.localStorage?.speechEnabled = speechEnabled
-      dup(state, speechEnabled: speechEnabled)
+      saveDup(state, speechEnabled: not state.speechEnabled)
     when 'toggleTellTime'
-      tellTime = not state.tellTime
-      window.localStorage?.tellTime = tellTime
-      dup(state, tellTime: tellTime)
+      saveDup(state, tellTime: not state.tellTime)
     else
       state
 

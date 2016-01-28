@@ -51,6 +51,7 @@ StartSelector = React.createClass
         else
           el(NumberSelector, type: @props.type, value: @props[@props.type], onChange: @handleChange, hasError: @props.error)
 
+        br {}
         div className: "form-group",
           label {},
             (input type: 'checkbox', checked: @props.speechEnabled, onChange: -> store.dispatch(type: 'toggleSpeech')),
@@ -62,4 +63,5 @@ StartSelector = React.createClass
               (input type: 'checkbox', checked: @props.tellTime, onChange: -> store.dispatch(type: 'toggleTellTime')),
               ' Include task duration  '
 
-        button type: "submit", className: "btn btn-primary", disabled: @props.error, 'Start'
+        br {}
+        button type: "submit", className: "btn btn-primary btn-lg", disabled: @props.error, 'Start training'
