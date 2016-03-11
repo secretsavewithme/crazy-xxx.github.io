@@ -104,38 +104,53 @@ class Roll
   debug: ->
     "x=#{@x} y=#{@y} z=#{@z} x0=#{@x0} y0=#{@y0}"
 
-calcMoney = (rolls) ->
-  if rolls.length
-    [roll, rolls...] = rolls
-    return 0 if roll.takesAll()
-    m = roll.money() + calcMoney(rolls)
-    if roll.takesHalf() then parseInt(m / 2) else m
-  else
-    0
+  hasClamps: ->
+    _.any @numKink(), (y) -> y == 1 or y == 8 or y == 9
+
+  hasCollar: ->
+    _.any @numKink(), (y) -> y == 3 or y == 9
 
 { button, div, form, img, h1, h3, h4, input, label, li, option, p, select, span, strong, ul } = React.DOM
 
 StartSelector = React.createClass
   getInitialState: ->
     value: @props.A || 0
+    permanentClamps: window.localStorage?.permanentClamps == 'true'
+    permanentCollar: window.localStorage?.permanentCollar == 'true'
 
   handleSubmit: (e) ->
     e.preventDefault()
-    @props.started(@state.value)
+    @props.started(@state.value, @state.permanentClamps, @state.permanentCollar)
 
   handleChange: (e) ->
     @setState value: e.target.value
+
+  storeState: (obj) ->
+    for k, v of obj
+      window.localStorage?[k] = v
+    @setState obj
 
   render: ->
     div {},
       p className: "lead",
         'The game is not started yet. Select a value for A (target amount of money) and press Start.'
-      form className: "form-inline", onSubmit: @handleSubmit,
+      form className: "form", onSubmit: @handleSubmit,
         div(className: "form-group",
           label({}, 'A ='),
           select className: "form-control", defaultValue: @props.A, onChange: @handleChange, style: {display: 'inline-block', width: 'auto'},
             option(value: 0, 'Random'),
             option(key: x, value: x, "#{x} ($#{x}00)") for x in [1..10]), ' '
+
+        div className: "form-group",
+          label {},
+            (input type: 'checkbox', checked: @state.permanentClamps, onChange: => @storeState permanentClamps: not @state.permanentClamps),
+            ' Permanent nippleclamps [once you get them, keep them on until the end of the game, +$5 to every roll] '
+
+        div className: "form-group",
+          label {},
+            (input type: 'checkbox', checked: @state.permanentCollar, onChange: => @storeState permanentCollar: not @state.permanentCollar),
+            ' Permanent collar [once you get it, keep it on until the end of the game, +$5 to every roll] '
+
         button type: "submit", className: "btn btn-primary", 'Start'
 
 Game = React.createClass
@@ -145,12 +160,18 @@ Game = React.createClass
     rolls: []
     debug: false
     original: false
+    keepClamps: false
+    keepCollar: false
 
   createNextTask: (e) ->
     e.preventDefault()
-    rolls = [new Roll()].concat(@state.rolls)
-    money = calcMoney(rolls)
-    @setState(rolls: rolls, money: money)
+    rolls = [roll = new Roll()].concat(@state.rolls)
+    money = @calcMoney(rolls)
+    @setState(
+      rolls: rolls,
+      money: money,
+      keepClamps: @state.keepClamps or @props.permanentClamps and roll.hasClamps(),
+      keepCollar: @state.keepCollar or @props.permanentCollar and roll.hasCollar())
 
   rollB: ->
     @setState b: d()
@@ -177,6 +198,28 @@ Game = React.createClass
   toggleOriginal: ->
     @setState original: not @state.original
 
+  calcMoney: (rolls) ->
+    money = 0
+    hasClamps = false
+    hasCollar = false
+    for roll in rolls by -1
+      if roll.takesAll()
+        money = 0
+      else
+        money += roll.money()
+        if @props.permanentClamps
+          if roll.hasClamps()
+            hasClamps = true
+          else if hasClamps
+            money += 5
+        if @props.permanentCollar
+          if roll.hasCollar()
+            hasCollar = true
+          else if hasCollar
+            money += 5
+        money = parseInt(money / 2) if roll.takesHalf()
+    money
+
   moneyLabel: (type, text, additionalClass) ->
     div className: "col-xs-6 #{additionalClass}",
       h3 className: 'hidden-xs',
@@ -192,6 +235,17 @@ Game = React.createClass
       div className: 'row',
         @moneyLabel("info", "Your money: $#{@state.money}")
         @moneyLabel("success", "Target money: $#{@state.target}", 'text-right')
+      if @state.keepClamps or @state.keepCollar
+        div className: 'row center-block text-center',
+          if @state.keepClamps
+            h4 {},
+              span className: "label label-warning",
+                "Keep your nippleclamps on"
+          ' '
+          if @state.keepCollar
+            h4 {},
+              span className: "label label-warning",
+                "Keep your collar on"
       div className: 'row', style: {marginTop: 20},
         div className: 'col-xs-12',
           canGetNext and
@@ -246,9 +300,9 @@ OWRMain = React.createClass
   getAFromQuery: ->
     _.min([+m[1], 10]) if m = top.location.search.match(/[?&]a=(\d+)/)
 
-  startGame: (a) ->
+  startGame: (a, permanentClamps, permanentCollar) ->
     a ||= parseInt(1 + Math.random() * 10)
-    @setState started: true, A: a
+    @setState started: true, A: a, permanentClamps: permanentClamps, permanentCollar: permanentCollar
 
   startAnother: ->
     @setState started: false, A: undefined
@@ -257,7 +311,10 @@ OWRMain = React.createClass
     div className: "container",
       h1({}, 'Oral Whore Roulette'),
       if @state.started
-        <Game A={@state.A} startAnother={@startAnother} />
+        <Game A={@state.A}
+              permanentClamps={@state.permanentClamps}
+              permanentCollar={@state.permanentCollar}
+              startAnother={@startAnother} />
       else
         <StartSelector started={@startGame} A={@state.A} />
 
