@@ -47,7 +47,45 @@ Game = React.createClass
           "Target: " + @props.target + ", Elapsed: " + @props.elapsed
 
   renderFinished: ->
-    div {},
-      h2 {},
-        speak("Congratulations! You completed #{@props.elapsed} seconds of training!")
-      button className: "btn btn-success btn-lg center-block", style: {marginBottom: 20}, onClick: @startAnother, 'Start another training'
+    div className: 'jumbotron',
+      p {},
+        speak("Congratulations! You completed #{formatTime(@props.elapsed)} of training!")
+      button className: "btn btn-success btn-lg ", style: {marginBottom: 20}, onClick: @startAnother, 'Start another training'
+
+pluralize = (num, singular, plural = singular + 's') ->
+  switch num
+    when 0
+      ""
+    when 1
+      "1 #{singular}"
+    else
+      "#{num} #{plural}"
+
+formatTime = (seconds) ->
+  minutes = Math.floor(seconds / 60)
+  m$ = pluralize(minutes, "minute")
+  seconds = seconds % 60
+  s$ = pluralize(seconds, "second")
+  "#{m$} #{s$}".trim()
+
+assertEqual = (expected, actual) ->
+  throw new Error("Expected: <#{expected}> but got: <#{actual}>") if expected != actual
+
+testFormatTime = ->
+  assertEqual("",                      formatTime(0))
+  assertEqual("1 second",              formatTime(1))
+  assertEqual("2 seconds",             formatTime(2))
+  assertEqual("59 seconds",            formatTime(59))
+  assertEqual("1 minute",              formatTime(60))
+  assertEqual("1 minute 1 second",     formatTime(61))
+  assertEqual("1 minute 2 seconds",    formatTime(62))
+  assertEqual("1 minute 59 seconds",   formatTime(119))
+  assertEqual("2 minutes",             formatTime(120))
+  assertEqual("2 minutes 1 second",    formatTime(121))
+  assertEqual("2 minutes 2 seconds",   formatTime(122))
+  assertEqual("2 minutes 59 seconds",  formatTime(179))
+  assertEqual("10 minutes",            formatTime(600))
+  assertEqual("10 minutes 1 second",   formatTime(601))
+  assertEqual("10 minutes 2 seconds",  formatTime(602))
+  assertEqual("10 minutes 59 seconds", formatTime(659))
+  console.log('All systems functional.')

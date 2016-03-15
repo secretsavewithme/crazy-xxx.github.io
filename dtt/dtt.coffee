@@ -1,3 +1,8 @@
+# TODO:
+# √ completed minutes and seconds
+# - progress bar
+# - say percantage?
+
 { a, br, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM
 el = React.createElement
 
@@ -30,7 +35,9 @@ render = ->
 store.subscribe(render)
 render()
 
-store.subscribe(-> console.log 'current state', JSON.stringify(store.getState())) if local
+if local
+  store.subscribe(-> console.log 'current state', JSON.stringify(store.getState()))
+  testFormatTime()
 
 speak = (task) ->
   # console.log 'still playing', responsiveVoice.isPlaying()
