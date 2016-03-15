@@ -8,8 +8,9 @@ Game = React.createClass
   render: ->
     div {},
       @renderFinished() if @props.finished
+      @renderProgress() if @props.tasks.length
       @renderTasks()
-      unless @props.running or @props.countdown
+      unless @props.running or @props.countdown or @props.tasks.length
         button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @startCountdown, 'Click here when ready'
 
   countDownText: ->
@@ -51,6 +52,15 @@ Game = React.createClass
       p {},
         speak("Congratulations! You completed #{formatTime(@props.elapsed)} of training!")
       button className: "btn btn-success btn-lg ", style: {marginBottom: 20}, onClick: @startAnother, 'Start another training'
+
+  renderProgress: ->
+    percent = @props.elapsed / @props.target * 100
+    div className: 'progress',
+      div {
+        className: "progress-bar progress-bar-success progress-bar-striped active"
+        role: "progressbar"
+        aria: {valuenow: percent, valuemin: 0, valuemax: 100}
+        style: {width: "#{percent}%"}}
 
 pluralize = (num, singular, plural = singular + 's') ->
   switch num

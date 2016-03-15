@@ -1,6 +1,6 @@
 # TODO:
 # √ completed minutes and seconds
-# - progress bar
+# √ progress bar
 # - say percantage?
 
 { a, br, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM

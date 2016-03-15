@@ -332,7 +332,7 @@ Game = React.createClass({
     });
   },
   render: function() {
-    return div({}, this.props.finished ? this.renderFinished() : void 0, this.renderTasks(), !(this.props.running || this.props.countdown) ? button({
+    return div({}, this.props.finished ? this.renderFinished() : void 0, this.props.tasks.length ? this.renderProgress() : void 0, this.renderTasks(), !(this.props.running || this.props.countdown || this.props.tasks.length) ? button({
       type: "submit",
       className: "btn btn-primary btn-lg center-block",
       onClick: this.startCountdown
@@ -397,6 +397,24 @@ Game = React.createClass({
       },
       onClick: this.startAnother
     }, 'Start another training'));
+  },
+  renderProgress: function() {
+    var percent;
+    percent = this.props.elapsed / this.props.target * 100;
+    return div({
+      className: 'progress'
+    }, div({
+      className: "progress-bar progress-bar-success progress-bar-striped active",
+      role: "progressbar",
+      aria: {
+        valuenow: percent,
+        valuemin: 0,
+        valuemax: 100
+      },
+      style: {
+        width: percent + "%"
+      }
+    }));
   }
 });
 
