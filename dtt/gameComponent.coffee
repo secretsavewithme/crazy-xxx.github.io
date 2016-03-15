@@ -54,13 +54,15 @@ Game = React.createClass
       button className: "btn btn-success btn-lg ", style: {marginBottom: 20}, onClick: @startAnother, 'Start another training'
 
   renderProgress: ->
-    percent = @props.elapsed / @props.target * 100
-    div className: 'progress',
+    tasks = @props.tasks.map (task) =>
+      percent = task.elapsed / @props.target * 100
+      type = ['success', 'info', 'warning', 'danger'][task.diff]
       div {
-        className: "progress-bar progress-bar-success progress-bar-striped active"
+        className: "progress-bar progress-bar-#{type} progress-bar-striped active"
         role: "progressbar"
-        aria: {valuenow: percent, valuemin: 0, valuemax: 100}
         style: {width: "#{percent}%"}}
+    tasks.reverse()
+    div className: 'progress', tasks
 
 pluralize = (num, singular, plural = singular + 's') ->
   switch num

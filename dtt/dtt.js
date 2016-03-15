@@ -399,22 +399,25 @@ Game = React.createClass({
     }, 'Start another training'));
   },
   renderProgress: function() {
-    var percent;
-    percent = this.props.elapsed / this.props.target * 100;
+    var tasks;
+    tasks = this.props.tasks.map((function(_this) {
+      return function(task) {
+        var percent, type;
+        percent = task.elapsed / _this.props.target * 100;
+        type = ['success', 'info', 'warning', 'danger'][task.diff];
+        return div({
+          className: "progress-bar progress-bar-" + type + " progress-bar-striped active",
+          role: "progressbar",
+          style: {
+            width: percent + "%"
+          }
+        });
+      };
+    })(this));
+    tasks.reverse();
     return div({
       className: 'progress'
-    }, div({
-      className: "progress-bar progress-bar-success progress-bar-striped active",
-      role: "progressbar",
-      aria: {
-        valuenow: percent,
-        valuemin: 0,
-        valuemax: 100
-      },
-      style: {
-        width: percent + "%"
-      }
-    }));
+    }, tasks);
   }
 });
 
