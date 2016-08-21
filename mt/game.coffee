@@ -21,7 +21,7 @@ game = (state = gameInitialState, action) ->
 startingGameState = ->
   started: true
   phase: 'learning'
-  currentLearning: 0
+  currentLearning: -1
   pairs: combinePairs()
 
 gxs = [ #http://gentlemanboners.tumblr.com/archive
@@ -53,7 +53,7 @@ combinePairs = ->
 
 prepareTesting = (pairs) ->
   phase: 'testing'
-  currentTest: 0
+  currentTest: -1
   pairs: _.shuffle(pairs)
 
 getRandomsCxs = (cx) ->

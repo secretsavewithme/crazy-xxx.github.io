@@ -26,11 +26,10 @@ GameComponent = React.createClass
 
   renderLearning: ->
     div {},
-      div className: 'row',
-        div className: 'col-xs-6',
-          @gxImage()
-        div className: 'col-xs-6',
-          @cxImage()
+      if @currentPair()
+        @renderLearningPair()
+      else
+        @renderLearningIntro()
       div className: 'row', style: {marginTop: 25},
         button
           type: "submit",
@@ -38,22 +37,47 @@ GameComponent = React.createClass
           onClick: @nextLearning,
           disabled: @state.disabledContinue,
           if @state.disabledContinue
-            (img src: '../vendor/gears.svg')
+            span {},
+              (img src: '../vendor/gears.gif')
+              ' Caching images...'
           else
             'Continue'
 
+  renderLearningIntro: ->
+    div className: "jumbotron",
+      h1 {}, 'Learning phase'
+      p {}, "You're going to see #{@props.pairs.length} pairs of images. Try to remember which images goes with which."
+
+  renderLearningPair: ->
+    div className: 'row',
+      div className: 'col-xs-6',
+        @gxImage()
+      div className: 'col-xs-6',
+        @cxImage()
+
   renderTesting: ->
     div {},
-      div className: 'row',
-        div className: 'col-xs-6',
-          @gxImage()
-        div className: 'col-xs-6',
-          @renderCxs()
+      if @currentPair()
+        @renderTestingPair()
+      else
+        @renderTestingIntro()
+
+  renderTestingPair: ->
+    div className: 'row',
+      div className: 'col-xs-6',
+        @gxImage()
+      div className: 'col-xs-6',
+        @renderCxs()
+
+  renderTestingIntro: ->
+    div className: "jumbotron",
+      h1 {}, 'Testing phase'
+      p {}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."
       div className: 'row', style: {marginTop: 25},
         button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @nextTest, 'Continue'
 
   renderCxs: ->
-    cxs = getRandomsCxs(@currentPair()[1])
+    cxs = @currentPair()[1..-1]
     div {},
       _.map cxs, (cx) =>
         div className: 'row',
@@ -95,7 +119,6 @@ GameComponent = React.createClass
 
   renderPreloader: ->
     if pair = @nextPair()
-      console.log 'pair', pair
       div style: {display: 'none'},
         _.map pair, (url) ->
-          img src: url, className: 'observedImage', style: {width: 100, height: 100}
+          img src: url, className: 'observedImage'#, style: {width: 100, height: 100}

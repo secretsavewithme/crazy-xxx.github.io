@@ -58,13 +58,7 @@ GameComponent = React.createClass({
     return div({}, this.learningPhase() ? this.renderLearning() : this.renderTesting(), this.renderPreloader());
   },
   renderLearning: function() {
-    return div({}, div({
-      className: 'row'
-    }, div({
-      className: 'col-xs-6'
-    }, this.gxImage()), div({
-      className: 'col-xs-6'
-    }, this.cxImage())), div({
+    return div({}, this.currentPair() ? this.renderLearningPair() : this.renderLearningIntro(), div({
       className: 'row',
       style: {
         marginTop: 25
@@ -74,18 +68,40 @@ GameComponent = React.createClass({
       className: "btn btn-primary btn-lg center-block",
       onClick: this.nextLearning,
       disabled: this.state.disabledContinue
-    }, this.state.disabledContinue ? img({
-      src: '../vendor/gears.svg'
-    }) : 'Continue')));
+    }, this.state.disabledContinue ? span({}, img({
+      src: '../vendor/gears.gif'
+    }), ' Caching images...') : 'Continue')));
   },
-  renderTesting: function() {
-    return div({}, div({
+  renderLearningIntro: function() {
+    return div({
+      className: "jumbotron"
+    }, h1({}, 'Learning phase'), p({}, "You're going to see " + this.props.pairs.length + " pairs of images. Try to remember which images goes with which."));
+  },
+  renderLearningPair: function() {
+    return div({
       className: 'row'
     }, div({
       className: 'col-xs-6'
     }, this.gxImage()), div({
       className: 'col-xs-6'
-    }, this.renderCxs())), div({
+    }, this.cxImage()));
+  },
+  renderTesting: function() {
+    return div({}, this.currentPair() ? this.renderTestingPair() : this.renderTestingIntro());
+  },
+  renderTestingPair: function() {
+    return div({
+      className: 'row'
+    }, div({
+      className: 'col-xs-6'
+    }, this.gxImage()), div({
+      className: 'col-xs-6'
+    }, this.renderCxs()));
+  },
+  renderTestingIntro: function() {
+    return div({
+      className: "jumbotron"
+    }, h1({}, 'Testing phase'), p({}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."), div({
       className: 'row',
       style: {
         marginTop: 25
@@ -98,7 +114,7 @@ GameComponent = React.createClass({
   },
   renderCxs: function() {
     var cxs;
-    cxs = getRandomsCxs(this.currentPair()[1]);
+    cxs = this.currentPair().slice(1);
     return div({}, _.map(cxs, (function(_this) {
       return function(cx) {
         return div({
@@ -172,7 +188,6 @@ GameComponent = React.createClass({
   renderPreloader: function() {
     var pair;
     if (pair = this.nextPair()) {
-      console.log('pair', pair);
       return div({
         style: {
           display: 'none'
@@ -180,11 +195,7 @@ GameComponent = React.createClass({
       }, _.map(pair, function(url) {
         return img({
           src: url,
-          className: 'observedImage',
-          style: {
-            width: 100,
-            height: 100
-          }
+          className: 'observedImage'
         });
       }));
     }
@@ -229,7 +240,7 @@ startingGameState = function() {
   return {
     started: true,
     phase: 'learning',
-    currentLearning: 0,
+    currentLearning: -1,
     pairs: combinePairs()
   };
 };
@@ -250,7 +261,7 @@ combinePairs = function() {
 prepareTesting = function(pairs) {
   return {
     phase: 'testing',
-    currentTest: 0,
+    currentTest: -1,
     pairs: _.shuffle(pairs)
   };
 };
