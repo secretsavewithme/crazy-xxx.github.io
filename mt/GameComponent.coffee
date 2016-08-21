@@ -1,10 +1,28 @@
 GameComponent = React.createClass
+  getInitialState: ->
+    disabledContinue: true
+
+  componentDidMount: ->
+    @interval = setInterval =>
+      allLoaded = true
+      $('.observedImage').each (_, img) ->
+        allLoaded &&= img.complete && img.naturalWidth > 0
+      if allLoaded == @state.disabledContinue
+        @setState(disabledContinue: !allLoaded)
+    , 100
+    console.log 'interval', @interval
+
+  componentWillUnmount: ->
+    console.log 'componentWillUnmount', @interval
+    deleteInterval @interval if @interval
+
   render: ->
     div {},
       if @learningPhase()
         @renderLearning()
       else
         @renderTesting()
+      @renderPreloader()
 
   renderLearning: ->
     div {},
@@ -14,7 +32,15 @@ GameComponent = React.createClass
         div className: 'col-xs-6',
           @cxImage()
       div className: 'row', style: {marginTop: 25},
-        button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @nextLearning, 'Continue'
+        button
+          type: "submit",
+          className: "btn btn-primary btn-lg center-block",
+          onClick: @nextLearning,
+          disabled: @state.disabledContinue,
+          if @state.disabledContinue
+            (img src: '../vendor/gears.svg')
+          else
+            'Continue'
 
   renderTesting: ->
     div {},
@@ -49,13 +75,27 @@ GameComponent = React.createClass
     @halfSizeImage(@currentPair()[1], 'left')
 
   halfSizeImage: (url, align) ->
-    img src: url, style: {maxHeight: '80vh', maxWidth: '100%', float: align}
+    img src: url, className: 'observedImage', style: {maxHeight: '80vh', maxWidth: '100%', float: align}
 
   smallCxImage: (url, align = 'left') ->
-    img src: url, style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10}
+    img src: url, className: 'observedImage', style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10}
 
   nextLearning: ->
+    @setState disabledContinue: true
     store.dispatch(type: 'nextLearning')
 
   nextTest: ->
     store.dispatch(type: 'nextTest')
+
+  nextPair: ->
+    if @learningPhase()
+      @props.pairs[@props.currentLearning + 1]
+    else
+      @props.pairs[@props.currentTest + 1]
+
+  renderPreloader: ->
+    if pair = @nextPair()
+      console.log 'pair', pair
+      div style: {display: 'none'},
+        _.map pair, (url) ->
+          img src: url, className: 'observedImage', style: {width: 100, height: 100}
