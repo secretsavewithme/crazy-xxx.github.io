@@ -5,6 +5,8 @@ game = (state = gameInitialState, action) ->
   switch action.type
     when 'startGame'
       dup(state, startingGameState())
+    when 'newGame'
+      dup(gameInitialState)
     when 'nextLearning'
       if state.currentLearning + 1 < state.pairs.length
         dup(state, currentLearning: state.currentLearning + 1)
@@ -14,7 +16,9 @@ game = (state = gameInitialState, action) ->
       if state.currentTest + 1 < state.pairs.length
         dup(state, currentTest: state.currentTest + 1)
       else
-        dup(state, 1/0)
+        dup(state, finished: true)
+    when 'wrongAnswer'
+      dup(state, wrongAnswer: true, currentTest: -1)
     else
       state
 

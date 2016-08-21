@@ -32,7 +32,7 @@ GameComponent = React.createClass({
     };
   },
   componentDidMount: function() {
-    this.interval = setInterval((function(_this) {
+    return this.interval = setInterval((function(_this) {
       return function() {
         var allLoaded;
         allLoaded = true;
@@ -46,16 +46,33 @@ GameComponent = React.createClass({
         }
       };
     })(this), 100);
-    return console.log('interval', this.interval);
   },
   componentWillUnmount: function() {
-    console.log('componentWillUnmount', this.interval);
     if (this.interval) {
-      return deleteInterval(this.interval);
+      return clearInterval(this.interval);
     }
   },
   render: function() {
-    return div({}, this.learningPhase() ? this.renderLearning() : this.renderTesting(), this.renderPreloader());
+    return div({}, this.props.finished ? this.renderFinished() : this.learningPhase() ? this.renderLearning() : this.renderTesting(), this.renderPreloader());
+  },
+  renderFinished: function() {
+    return div({
+      className: "jumbotron"
+    }, h1({}, 'Congratulations! You passed!'), div({
+      className: 'row',
+      style: {
+        marginTop: 25
+      }
+    }, button({
+      type: "submit",
+      className: "btn btn-success btn-lg center-block",
+      onClick: this.newGame
+    }, 'Start another game')));
+  },
+  newGame: function() {
+    return store.dispatch({
+      type: 'newGame'
+    });
   },
   renderLearning: function() {
     return div({}, this.currentPair() ? this.renderLearningPair() : this.renderLearningIntro(), div({
@@ -101,7 +118,7 @@ GameComponent = React.createClass({
   renderTestingIntro: function() {
     return div({
       className: "jumbotron"
-    }, h1({}, 'Testing phase'), p({}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."), div({
+    }, this.props.wrongAnswer ? h3({}, "Oops! Wrong answer! You need to repeat your test!") : h1({}, 'Testing phase'), p({}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."), div({
       className: 'row',
       style: {
         marginTop: 25
@@ -162,8 +179,20 @@ GameComponent = React.createClass({
         maxWidth: '100%',
         float: align,
         marginBottom: 10
-      }
+      },
+      onClick: this.checkAnswer
     });
+  },
+  checkAnswer: function(e) {
+    if (e.target.src === this.currentPair()[1]) {
+      return store.dispatch({
+        type: 'nextTest'
+      });
+    } else {
+      return store.dispatch({
+        type: 'wrongAnswer'
+      });
+    }
   },
   nextLearning: function() {
     this.setState({
@@ -213,6 +242,8 @@ game = function(state, action) {
   switch (action.type) {
     case 'startGame':
       return dup(state, startingGameState());
+    case 'newGame':
+      return dup(gameInitialState);
     case 'nextLearning':
       if (state.currentLearning + 1 < state.pairs.length) {
         return dup(state, {
@@ -228,9 +259,16 @@ game = function(state, action) {
           currentTest: state.currentTest + 1
         });
       } else {
-        return dup(state, 1 / 0);
+        return dup(state, {
+          finished: true
+        });
       }
       break;
+    case 'wrongAnswer':
+      return dup(state, {
+        wrongAnswer: true,
+        currentTest: -1
+      });
     default:
       return state;
   }

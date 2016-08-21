@@ -10,19 +10,28 @@ GameComponent = React.createClass
       if allLoaded == @state.disabledContinue
         @setState(disabledContinue: !allLoaded)
     , 100
-    console.log 'interval', @interval
 
   componentWillUnmount: ->
-    console.log 'componentWillUnmount', @interval
-    deleteInterval @interval if @interval
+    clearInterval @interval if @interval
 
   render: ->
     div {},
-      if @learningPhase()
+      if @props.finished
+        @renderFinished()
+      else if @learningPhase()
         @renderLearning()
       else
         @renderTesting()
       @renderPreloader()
+
+  renderFinished: ->
+    div className: "jumbotron",
+      h1 {}, 'Congratulations! You passed!'
+      div className: 'row', style: {marginTop: 25},
+        button type: "submit", className: "btn btn-success btn-lg center-block", onClick: @newGame, 'Start another game'
+
+  newGame: ->
+    store.dispatch(type: 'newGame')
 
   renderLearning: ->
     div {},
@@ -71,7 +80,10 @@ GameComponent = React.createClass
 
   renderTestingIntro: ->
     div className: "jumbotron",
-      h1 {}, 'Testing phase'
+      if @props.wrongAnswer
+        h3 {}, "Oops! Wrong answer! You need to repeat your test!"
+      else
+        h1 {}, 'Testing phase'
       p {}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."
       div className: 'row', style: {marginTop: 25},
         button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @nextTest, 'Continue'
@@ -102,7 +114,17 @@ GameComponent = React.createClass
     img src: url, className: 'observedImage', style: {maxHeight: '80vh', maxWidth: '100%', float: align}
 
   smallCxImage: (url, align = 'left') ->
-    img src: url, className: 'observedImage', style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10}
+    img
+      src: url,
+      className: 'observedImage',
+      style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10}
+      onClick: @checkAnswer
+
+  checkAnswer: (e) ->
+    if e.target.src == @currentPair()[1]
+      store.dispatch(type: 'nextTest')
+    else
+      store.dispatch(type: 'wrongAnswer')
 
   nextLearning: ->
     @setState disabledContinue: true
