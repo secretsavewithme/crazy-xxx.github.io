@@ -3,7 +3,9 @@
 # √ start new game
 # √ ga
 # √ a from param
-# - save defaults
+# √ save defaults
+# - quick (gags instead of long sucking?)
+# - restore original tasks
 
 d = -> _.random(9)
 d19 = -> _.random(1, 9)
