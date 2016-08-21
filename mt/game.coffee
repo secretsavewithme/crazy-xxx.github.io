@@ -50,8 +50,9 @@ cxs = [
 ]
 
 combinePairs = ->
-  sg = _.shuffle(gxs)
-  sc = _.shuffle(cxs)
+  numberOfPairs = store.getState().gameParams.numberOfPairs
+  sg = _.shuffle(gxs)[0...numberOfPairs]
+  sc = _.shuffle(cxs)[0...numberOfPairs]
   _.map _.zip(sg, sc), (a) ->
     [a[0]].concat(getRandomsCxs(a[1]))
 
@@ -67,17 +68,17 @@ getRandomsCxs = (cx) ->
     res.push(rc) unless _.contains(res, rc)
   res
 
-wait = 0
-timer = ->
-  game = store.getState().game
-  return unless game.started
-  if game.countdown and (not responsiveVoice.isPlaying() or wait++ > 1) # kludge to avoid missing countdown
-    wait = 0
-    store.dispatch(type: 'decreaseCountdown')
-  else if game.running
-    if 0 == game.tasks.length or 0 == game.tasks[0].time
-      store.dispatch(type: 'nextTask')
-    else
-      store.dispatch(type: 'decreaseTask')
+# wait = 0
+# timer = ->
+#   game = store.getState().game
+#   return unless game.started
+#   if game.countdown and (not responsiveVoice.isPlaying() or wait++ > 1) # kludge to avoid missing countdown
+#     wait = 0
+#     store.dispatch(type: 'decreaseCountdown')
+#   else if game.running
+#     if 0 == game.tasks.length or 0 == game.tasks[0].time
+#       store.dispatch(type: 'nextTask')
+#     else
+#       store.dispatch(type: 'decreaseTask')
 
-setInterval(timer, 1000)
+# setInterval(timer, 1000)

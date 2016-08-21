@@ -55,7 +55,7 @@ GameComponent = React.createClass
   renderLearningIntro: ->
     div className: "jumbotron",
       h1 {}, 'Learning phase'
-      p {}, "You're going to see #{@props.pairs.length} pairs of images. Try to remember which images goes with which."
+      p {}, "You're going to see #{@props.pairs.length} pairs of images. Try to remember which image goes with which."
 
   renderLearningPair: ->
     div className: 'row',
@@ -89,10 +89,10 @@ GameComponent = React.createClass
         button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @nextTest, 'Continue'
 
   renderCxs: ->
-    cxs = @currentPair()[1..-1]
+    cxs = _.shuffle @currentPair()[1..-1]
     div {},
       _.map cxs, (cx) =>
-        div className: 'row',
+        div className: 'row', key: cx,
           @smallCxImage(cx)
 
   currentPair: ->
@@ -143,4 +143,4 @@ GameComponent = React.createClass
     if pair = @nextPair()
       div style: {display: 'none'},
         _.map pair, (url) ->
-          img src: url, className: 'observedImage'#, style: {width: 100, height: 100}
+          img src: url, key: url, className: 'observedImage'#, style: {width: 100, height: 100}

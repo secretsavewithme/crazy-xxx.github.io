@@ -2,6 +2,7 @@ local = !top.location.hostname
 
 gameParamsDefaults =
   error: false
+  numberOfPairs: gxs.length
 
 parseQueryParams = ->
   _.object(
@@ -34,14 +35,16 @@ gameParamValid = (prop, val, state) ->
     true
 
 saveDup = (objs...) ->
+  console.log 'saveDup', objs
   newState = dup(objs...)
+  console.log 'newState', newState
   window.localStorage?.gameParams = JSON.stringify(newState)
   newState
 
 gameParams = (state = gameParamsInitialState(), action) ->
   switch action.type
-    when 'changeType'
-      saveDup(state, type: action.selected, error: not gameParamValid(action.selected, state[action.selected], state))
+    when 'numberOfPairsChanged'
+      saveDup(state, numberOfPairs: action.value)
     when 'changeVal'
       saveDup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
     when 'toggleSpeech'
