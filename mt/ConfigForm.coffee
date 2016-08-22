@@ -25,10 +25,10 @@ ConfigForm = React.createClass
     store.dispatch(type: 'startGame') unless @props.error
 
   render: ->
-    div {},
+    div className: '',
       p className: "lead",
         'The game is not started yet. Select training time and press Start.'
-      form className: "form-inline", onSubmit: @startGame,
+      form className: "", onSubmit: @startGame,
         el(NumberSelector,
           label: 'Number of pairs',
           value: @props.numberOfPairs,
@@ -37,8 +37,18 @@ ConfigForm = React.createClass
           min: 1,
           max: gxs.length)
 
-        br {}
+        div(className: "form-group",
+          label({}, 'On wrong answer: '),
+          select className: "form-control", defaultValue: @props.onWrongAnswer, onChange: @onWrongAnswerChanged, style: {width: 'auto'},
+            option(value: 'retry', 'Retry same picture'),
+            option(value: 'restart', 'Restart test'),
+            option(value: 'learning', 'Restart learning'),
+            option(value: 'randomize', 'Randomize then restart learning'))
+
         button type: "submit", className: "btn btn-primary btn-lg", disabled: @props.error, 'Start training'
 
   numberOfPairsChanged: (e) ->
     store.dispatch(type: 'numberOfPairsChanged', value: e.target.value)
+
+  onWrongAnswerChanged: (e) ->
+    store.dispatch(type: 'onWrongAnswerChanged', value: e.target.value)

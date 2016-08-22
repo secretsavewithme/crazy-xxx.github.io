@@ -16,13 +16,24 @@ GameComponent = React.createClass
 
   render: ->
     div {},
-      if @props.finished
+      if @props.wrongAnswer
+        @renderWrongAnswer()
+      else if @props.finished
         @renderFinished()
       else if @learningPhase()
         @renderLearning()
       else
         @renderTesting()
       @renderPreloader()
+
+  renderWrongAnswer: ->
+    div className: "jumbotron",
+      h3 {}, "Oops! Wrong answer! You need to #{@wrongAnswerReaction()}."
+      div className: 'row', style: {marginTop: 25},
+        button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @clearWrongAnswer, 'Continue'
+
+  clearWrongAnswer: ->
+    store.dispatch(type: 'clearWrongAnswer')
 
   renderFinished: ->
     div className: "jumbotron",
@@ -65,11 +76,10 @@ GameComponent = React.createClass
         @cxImage()
 
   renderTesting: ->
-    div {},
-      if @currentPair()
-        @renderTestingPair()
-      else
-        @renderTestingIntro()
+    if @currentPair()
+      @renderTestingPair()
+    else
+      @renderTestingIntro()
 
   renderTestingPair: ->
     div className: 'row',
@@ -80,13 +90,21 @@ GameComponent = React.createClass
 
   renderTestingIntro: ->
     div className: "jumbotron",
-      if @props.wrongAnswer
-        h3 {}, "Oops! Wrong answer! You need to repeat your test!"
-      else
-        h1 {}, 'Testing phase'
+      h1 {}, 'Testing phase'
       p {}, "Now it's time for your test. You must match image pairs that you saw earlier. Click on the correct image to proceed."
       div className: 'row', style: {marginTop: 25},
         button type: "submit", className: "btn btn-primary btn-lg center-block", onClick: @nextTest, 'Continue'
+
+  wrongAnswerReaction: ->
+    switch store.getState().gameParams.onWrongAnswer
+      when 'retry'
+        'retry this picture'
+      when 'restart'
+        'restart the test'
+      when 'learning'
+        'repeat the learning of the same pairs'
+      when 'randomize'
+        'learn a new set of pairs'
 
   renderCxs: ->
     cxs = _.shuffle @currentPair()[1..-1]
@@ -117,7 +135,7 @@ GameComponent = React.createClass
     img
       src: url,
       className: 'observedImage',
-      style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10}
+      style: {maxHeight: '25vh', maxWidth: '100%', float: align, marginBottom: 10, cursor: 'pointer'}
       onClick: @checkAnswer
 
   checkAnswer: (e) ->

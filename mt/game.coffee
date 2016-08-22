@@ -18,7 +18,9 @@ game = (state = gameInitialState, action) ->
       else
         dup(state, finished: true)
     when 'wrongAnswer'
-      dup(state, wrongAnswer: true, currentTest: -1)
+      dup(state, wrongAnswer: true, wrongAnswerState())
+    when 'clearWrongAnswer'
+      dup(state, wrongAnswer: false)
     else
       state
 
@@ -60,6 +62,19 @@ prepareTesting = (pairs) ->
   phase: 'testing'
   currentTest: -1
   pairs: _.shuffle(pairs)
+
+wrongAnswerState = ->
+  switch store.getState().gameParams.onWrongAnswer
+    when 'retry'
+      {}
+    when 'restart'
+      currentTest: -1
+    when 'learning'
+      currentLearning: -1
+      phase: 'learning'
+    when 'randomize'
+      @startingGameState()
+
 
 getRandomsCxs = (cx) ->
   res = [cx]

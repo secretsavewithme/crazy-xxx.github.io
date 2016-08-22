@@ -3,6 +3,7 @@ local = !top.location.hostname
 gameParamsDefaults =
   error: false
   numberOfPairs: gxs.length
+  onWrongAnswer: 'restart'
 
 parseQueryParams = ->
   _.object(
@@ -14,7 +15,7 @@ gameParamsInitialState = ->
   _.assign(
     {},
     gameParamsDefaults,
-    JSON.parse(window.localStorage?.gameParams || "{}"),
+    JSON.parse(window.localStorage?.gameParamsMT || "{}"),
     parseQueryParams())
 
 isGtZero = (val) ->
@@ -35,31 +36,15 @@ gameParamValid = (prop, val, state) ->
     true
 
 saveDup = (objs...) ->
-  console.log 'saveDup', objs
   newState = dup(objs...)
-  console.log 'newState', newState
-  window.localStorage?.gameParams = JSON.stringify(newState)
+  window.localStorage?.gameParamsMT = JSON.stringify(newState)
   newState
 
 gameParams = (state = gameParamsInitialState(), action) ->
   switch action.type
     when 'numberOfPairsChanged'
       saveDup(state, numberOfPairs: action.value)
-    when 'changeVal'
-      saveDup(state, make(action.prop, action.val), error: not gameParamValid(action.prop, action.val, state))
-    when 'toggleSpeech'
-      saveDup(state, speechEnabled: not state.speechEnabled)
-    when 'toggleTellTime'
-      saveDup(state, tellTime: not state.tellTime)
+    when 'onWrongAnswerChanged'
+      saveDup(state, onWrongAnswer: action.value)
     else
       state
-
-calculateTargetTime = ->
-  params = store.getState().gameParams
-  switch params.type
-    when 'random'
-      _.random(params.min * 60, params.max * 60)
-    when 'minutes'
-      +params.minutes * 60
-    when 'seconds'
-      +params.seconds
