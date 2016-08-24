@@ -558,7 +558,7 @@ MTMain = React.createClass({
   render: function() {
     return div({
       className: "container"
-    }, h1({}, 'Memory Test'), this.props.game.started ? el(GameComponent, this.props.game) : el(ConfigForm, this.props.gameParams));
+    }, h1({}, 'Babe/Cock Memory Test'), this.props.game.started ? el(GameComponent, this.props.game) : el(ConfigForm, this.props.gameParams));
   }
 });
 

@@ -19,7 +19,7 @@ store = Redux.createStore(memoryLogic)
 MTMain = React.createClass
   render: ->
     div className: "container",
-      h1({}, 'Memory Test'),
+      h1({}, 'Babe/Cock Memory Test'),
       if @props.game.started
         el(GameComponent, @props.game)
       else
