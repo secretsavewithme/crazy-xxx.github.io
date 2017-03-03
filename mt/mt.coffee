@@ -1,5 +1,8 @@
 # TODO:
+# - https://www.youtube.com/watch?v=WQue1AN93YU
 # - progress
+# - th3 http://www.getdare.com/bbs/showthread.php?t=274819
+# - vdom
 
 { a, br, button, div, form, img, h1, h2, h3, h4, input, label, li, option, p, select, small, span, strong, ul } = React.DOM
 el = React.createElement
