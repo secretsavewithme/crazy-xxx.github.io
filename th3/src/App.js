@@ -8,7 +8,7 @@ class Game extends Component {
 }
 class ConfigPanel extends Component {
   render() {
-    return <div>ConfigPanel</div>
+    return <div>ConfigPanel 123</div>
   }
 }
 
