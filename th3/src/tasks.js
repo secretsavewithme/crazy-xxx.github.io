@@ -4,7 +4,7 @@ const headers = [
   'Challenge 01. Starting it easy',
   'Challenge 02. Getting into action',
   'Challenge 03. Short but sweet',
-  '',
+  'Challenge 04. Dripping mess',
   '',
   '',
   '',
@@ -15,7 +15,7 @@ const intros = [
   "So you decided to be a throat whore today, you will get more than you expect, but you should start slowly, enjoy it.",
   "Bored from licking and not getting full candy? Dont worry bitch, things are getting more interesting.",
   "This challenge will provide you more spit, don't swallow it, leave it in your mouth, all dripped spit must end in the bowl from now on. Obedient girls swallow only cum, but keep spit for the show.",
-  "",
+  "Put that mess on your face slut, you are about get nasty and degraded!",
   "",
   "",
   "",
@@ -45,12 +45,22 @@ const tasks =  [
   'push it in as fast as you can and rotate it 360 degrees two times',
   'push it into you throat and out as fast you can 3 times, repeat it 3 times',
   'All of it, with short breaks: {ALL}', ],
+
+  [ // 4
+    "Sit down, drool the spit and try to take it back to your mouth without using your hands. A little tip: imagine you're drinking with a straw",
+    "Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. A little tip: imagine you're drinking with a straw",
+    "Put all that spit onto your genitals and over the tits",
+    "Get on your back with your neck on the border of your bed, swallow dildo then look how it drips on your face, 15 times, don't blink",
+    "Get on your back with your neck on the border of your bed, and spit it all over your face, with closed eyes",
+    "Drink the spit",
+  ]
 ]
 
 const punishments = [
   null,
   null,
-  {intro: 'If you swallowed any spit, or it fell on floor...', task: 5},
+  {intro: "If you swallowed any spit, or it fell on floor...", task: 5},
+  {intro: "If you didn't create enough spit...", text: "swallow the dildo 30 times and repeat the challenge"},
   '',
   '',
 ]
@@ -76,6 +86,7 @@ const preparePunishment = (punishment, curTasks) => {
     if (punishment.task) {
       return { ...punishment, text: postProcess(curTasks, punishment.task) }
     }
+    return punishment
   }
 }
 

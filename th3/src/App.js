@@ -52,7 +52,7 @@ class Game extends Component {
         key={header}
         header={<h3>{header}<br/><small>{intro}</small></h3>}
         bsStyle={i === 0 ? "primary" : "default"}
-        footer={this.renderPunishment(punishment)}
+        footer={i === 0 && this.renderPunishment(punishment)}
       >
         {this.renderTask(task)}
       </Panel>)
