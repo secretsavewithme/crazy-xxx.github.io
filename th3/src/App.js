@@ -1,38 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Grid, PageHeader, Panel } from 'react-bootstrap';
-import { random } from 'lodash'
 
 import ConfigPanel from './ConfigPanel'
-
-const task01 = [
-  'lick the dildo 10 times',
-  'lick the dildo 15 times',
-  'put the head of your dildo in your mouth for 10 seconds',
-  'put the head of your dildo in your mouth for 15 seconds',
-  'lick the dildo 10 times and put the head of your dildo in your mouth for 10 seconds',
-  'lick the dildo 15 times and put the head of your dildo in your mouth for 15 seconds' ]
-
-const task02 = [
-  'swallow it until you get tears in eyes',
-  'slowly swallow it down your throat 1 time',
-  'slowly swallow it down your throat 2 times',
-  'slowly swallow it down your throat 3 times',
-  'quickly swallow it down your throat 3 times',
-  'slowly swallow it down your throat 3 times then quickly swallow it down your throat 3 times',
-]
-
-const nextTask = (num) => {
-  switch(num) {
-    case 1: return {
-      header: 'Challenge 01. Starting it easy',
-      intro: 'So you decided to be a throat whore today, you will get more than you expect, but you should start slowly, enjoy it.',
-      task: task01[random(5)]}
-    case 2: return {
-      header: 'Challenge 02. Getting into action',
-      intro: 'Bored from licking and not getting full candy? Dont worry bitch, things are getting more interesting.',
-      task: task02[random(5)]}
-  }
-}
+import nextTask from './tasks'
 
 class Game extends Component {
   state = {
@@ -40,18 +10,34 @@ class Game extends Component {
   }
 
   handleNextTask = () => {
-    const task = nextTask(this.state.tasks.length)
+    const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
     this.setState({tasks: [task].concat(this.state.tasks)})
+  }
+
+  renderTask(task) {
+    if (task.indexOf('\n') === -1) {
+      return task
+    }
+    else {
+      const tasks = task.split('\n')
+      return (
+        <div>
+          {tasks[0]}
+          <ul>
+            {tasks.slice(1).map(t => <li>{t}</li>)}
+          </ul>
+        </div>)
+    }
   }
 
   renderTasks() {
     return this.state.tasks.map(({header, intro, task}, i) =>
       <Panel
         key={header}
-        header={<h3>{header} <small>{intro}</small></h3>}
+        header={<h3>{header}<br/><small>{intro}</small></h3>}
         bsStyle={i === 0 ? "primary" : "default"}
       >
-        {task}
+        {this.renderTask(task)}
       </Panel>)
   }
 
@@ -76,7 +62,7 @@ class App extends Component {
       <Grid>
         <PageHeader>Throat Heaven 3</PageHeader>
         {this.state.started ?
-          <Game /> :
+          <Game difficulty={this.state.difficulty} /> :
           <ConfigPanel
             difficulty={this.state.difficulty}
             handleStart={() => this.setState({started: true})}
