@@ -47,6 +47,14 @@ const tasks =  [
   'All of it, with short breaks: {ALL}', ],
 ]
 
+const punishments = [
+  null,
+  null,
+  {intro: 'If you swallowed any spit, or it fell on floor...', task: 5},
+  '',
+  '',
+]
+
 const randIndex = (difficulty) => {
   if ('lite' === difficulty) {
     return random(4)
@@ -63,14 +71,22 @@ const withAllAppended = (task, curTasks) =>
 const postProcess = (curTasks, index) =>
   withAllAppended(curTasks[index], curTasks)
 
+const preparePunishment = (punishment, curTasks) => {
+  if (punishment) {
+    if (punishment.task) {
+      return { ...punishment, text: postProcess(curTasks, punishment.task) }
+    }
+  }
+}
+
 const nextTask = (num, difficulty) => {
-  const curTasks = tasks[num]
   const index = randIndex(difficulty)
-  const task = `[${index + 1}] ${postProcess(curTasks, index)}`
+  const task = `[${index + 1}] ${postProcess(tasks[num], index)}`
   return {
     header: headers[num],
     intro: intros[num],
-    task
+    task,
+    punishment: preparePunishment(punishments[num], tasks[num])
   }
 }
 

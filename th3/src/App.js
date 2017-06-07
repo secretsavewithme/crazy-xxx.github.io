@@ -11,7 +11,7 @@ class Game extends Component {
 
   handleNextTask = () => {
     const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
-    this.setState({tasks: [task].concat(this.state.tasks)})
+    this.setState({tasks: [task].concat(this.state.tasks), showPunishment: false})
   }
 
   renderTask(task) {
@@ -24,18 +24,35 @@ class Game extends Component {
         <div>
           {tasks[0]}
           <ul>
-            {tasks.slice(1).map(t => <li>{t}</li>)}
+            {tasks.slice(1).map(t => <li key={t}>{t}</li>)}
           </ul>
         </div>)
     }
   }
 
+  renderPunishment(punishment, num) {
+    if (punishment) {
+      return (
+        <div>
+          {punishment.intro}{' '}
+          {this.state.showPunishment ?
+            this.renderTask(punishment.text)
+          :
+            <Button bsStyle="danger" bsSize="xsmall" onClick={() => this.setState({showPunishment: true})}>
+              Get punishment
+            </Button>
+          }
+        </div>)
+    }
+  }
+
   renderTasks() {
-    return this.state.tasks.map(({header, intro, task}, i) =>
+    return this.state.tasks.map(({header, intro, task, punishment}, i) =>
       <Panel
         key={header}
         header={<h3>{header}<br/><small>{intro}</small></h3>}
         bsStyle={i === 0 ? "primary" : "default"}
+        footer={this.renderPunishment(punishment)}
       >
         {this.renderTask(task)}
       </Panel>)
