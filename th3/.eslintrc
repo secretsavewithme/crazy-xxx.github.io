@@ -9,7 +9,7 @@ rules:
   no-unused-vars: ["error", { "ignoreRestSiblings": true }]
   react/prefer-stateless-function: 2
   quotes: "off"
-  max-len: ["warn", 140]
+  max-len: ["warn", 160]
   prefer-template: "off"
   import/extensions: "off"
   import/no-webpack-loader-syntax: "off"
@@ -26,6 +26,12 @@ rules:
   react/require-default-props: "off"
   react/forbid-prop-types: "off"
   import/prefer-default-export: "off"
+  object-curly-spacing: ["error", "never"]
+  brace-style: ["error", "stroustrup"]
+  yoda: "off"
+  no-nested-ternary: "off"
+  react/jsx-wrap-multilines: "off"
+  react/no-multi-comp: "off"
 
 settings:
   import/resolver:

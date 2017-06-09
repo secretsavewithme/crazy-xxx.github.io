@@ -1,11 +1,11 @@
-import { random } from 'lodash'
+import {min, random} from 'lodash'
 
 const headers = [
   'Challenge 01. Starting it easy',
   'Challenge 02. Getting into action',
   'Challenge 03. Short but sweet',
   'Challenge 04. Dripping mess',
-  '',
+  'Challenge 05. Breath control',
   '',
   '',
   '',
@@ -14,55 +14,74 @@ const headers = [
 const intros = [
   "So you decided to be a throat whore today, you will get more than you expect, but you should start slowly, enjoy it.",
   "Bored from licking and not getting full candy? Dont worry bitch, things are getting more interesting.",
-  "This challenge will provide you more spit, don't swallow it, leave it in your mouth, all dripped spit must end in the bowl from now on. Obedient girls swallow only cum, but keep spit for the show.",
+  "This challenge will provide you more spit, don't swallow it, leave it in your mouth, all dripped spit must end in the bowl from now on. " +
+    "Obedient girls swallow only cum, but keep spit for the show.",
   "Put that mess on your face slut, you are about get nasty and degraded!",
-  "",
+  "When out of air, you will know what it truly means to submit like a slave.",
   "",
   "",
 ]
 
-const tasks =  [
+const tasks = [
   [ // 1
-  'lick the dildo 10 times',
-  'lick the dildo 15 times',
-  'put the head of your dildo in your mouth for 10 seconds',
-  'put the head of your dildo in your mouth for 15 seconds',
-  'lick the dildo 10 times and put the head of your dildo in your mouth for 10 seconds',
-  'lick the dildo 15 times and put the head of your dildo in your mouth for 15 seconds' ],
-
+    'lick the dildo 10 times',
+    'lick the dildo 15 times',
+    'put the head of your dildo in your mouth for 10 seconds',
+    'put the head of your dildo in your mouth for 15 seconds',
+    'lick the dildo 10 times and put the head of your dildo in your mouth for 10 seconds',
+    'lick the dildo 15 times and put the head of your dildo in your mouth for 15 seconds',
+  ],
   [ // 2
-  'swallow it until you get tears in eyes',
-  'slowly swallow it down your throat 1 time',
-  'slowly swallow it down your throat 2 times',
-  'slowly swallow it down your throat 3 times',
-  'quickly swallow it down your throat 3 times',
-  'slowly swallow it down your throat 3 times then quickly swallow it down your throat 3 times', ],
-
+    'swallow it until you get tears in eyes',
+    'slowly swallow it down your throat 1 time',
+    'slowly swallow it down your throat 2 times',
+    'slowly swallow it down your throat 3 times',
+    'quickly swallow it down your throat 3 times',
+    'slowly swallow it down your throat 3 times then quickly swallow it down your throat 3 times',
+  ],
   [ // 3
-  'push it down your throat and leave it there for 3 seconds',
-  'push it down your throat and rotate it 360 degrees. ',
-  'push it in as fast as you can and leave it there for 10 seconds',
-  'push it in as fast as you can and rotate it 360 degrees two times',
-  'push it into you throat and out as fast you can 3 times, repeat it 3 times',
-  'All of it, with short breaks: {ALL}', ],
-
+    'push it down your throat and leave it there for 3 seconds',
+    'push it down your throat and rotate it 360 degrees. ',
+    'push it in as fast as you can and leave it there for 10 seconds',
+    'push it in as fast as you can and rotate it 360 degrees two times',
+    'push it into you throat and out as fast you can 3 times, repeat it 3 times',
+    'All of it, with short breaks: {ALL}',
+  ],
   [ // 4
     "Sit down, drool the spit and try to take it back to your mouth without using your hands. A little tip: imagine you're drinking with a straw",
-    "Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. A little tip: imagine you're drinking with a straw",
+    "Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. " +
+      "A little tip: imagine you're drinking with a straw",
     "Put all that spit onto your genitals and over the tits",
     "Get on your back with your neck on the border of your bed, swallow dildo then look how it drips on your face, 15 times, don't blink",
     "Get on your back with your neck on the border of your bed, and spit it all over your face, with closed eyes",
     "Drink the spit",
-  ]
+  ],
+  [ // 5
+    "you have to hold it in your throat for 8 seconds {TIMER: 8}",
+    "you have to hold it in your throat for 10 seconds, smack your face once during this {TIMER: 10}",
+    "you have to hold it in your throat for 12 seconds, smack your face once during this {TIMER: 12}",
+    "you have to hold it in your throat for 18 seconds, smack your face twice during this {TIMER: 18}",
+    "you have to hold it in your throat for 24 seconds, smack your face twice during this {TIMER: 24}",
+    "you have to hold it in your throat for 30 seconds, smack your face 3 times during this {TIMER: 30}",
+  ],
+  [ // 6
+  ],
+  [ // 7
+  ],
+  [ // 8
+  ],
 ]
 
 const punishments = [
   null,
   null,
-  {intro: "If you swallowed any spit, or it fell on floor...", task: 5},
+  {intro: "If you swallowed any spit, or it fell on the floor...", task: 5},
   {intro: "If you didn't create enough spit...", text: "swallow the dildo 30 times and repeat the challenge"},
-  '',
-  '',
+  {intro: "If you didn't hold it in long enough...", easier: 1},
+  {},
+  {},
+  {},
+  {},
 ]
 
 const randIndex = (difficulty) => {
@@ -78,13 +97,30 @@ const randIndex = (difficulty) => {
 const withAllAppended = (task, curTasks) =>
   task.replace("{ALL}", "\n" + curTasks.slice(0, 5).join("\n"))
 
-const postProcess = (curTasks, index) =>
-  withAllAppended(curTasks[index], curTasks)
+const extractTimer = (mightContainTimer) => {
+  let timer
+  const task = mightContainTimer.replace(/\s*{TIMER: (\d+)}\s*/, (_, num) => {
+    timer = +num
+    return ''
+  })
+  return {task, timer}
+}
 
-const preparePunishment = (punishment, curTasks) => {
+const prependIndex = (task, index) => `[${index + 1}] ${task}`
+
+const prepareTask = (curTasks, index) =>
+  extractTimer(
+    prependIndex(
+      withAllAppended(curTasks[index], curTasks), index))
+
+const preparePunishment = (punishment, curTasks, index) => {
   if (punishment) {
     if (punishment.task) {
-      return { ...punishment, text: postProcess(curTasks, punishment.task) }
+      return {...punishment, text: prepareTask(curTasks, punishment.task).task}
+    }
+    if (punishment.easier) {
+      const punishmentTask = prepareTask(curTasks, min([index - 1, 0]))
+      return {...punishment, text: punishmentTask.task, timer: punishmentTask.timer}
     }
     return punishment
   }
@@ -92,12 +128,11 @@ const preparePunishment = (punishment, curTasks) => {
 
 const nextTask = (num, difficulty) => {
   const index = randIndex(difficulty)
-  const task = `[${index + 1}] ${postProcess(tasks[num], index)}`
   return {
     header: headers[num],
     intro: intros[num],
-    task,
-    punishment: preparePunishment(punishments[num], tasks[num])
+    ...prepareTask(tasks[num], index),
+    punishment: preparePunishment(punishments[num], tasks[num], index),
   }
 }
 
