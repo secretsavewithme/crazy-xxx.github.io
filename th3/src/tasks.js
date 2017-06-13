@@ -6,7 +6,7 @@ const headers = [
   'Challenge 03. Short but sweet',
   'Challenge 04. Dripping mess',
   'Challenge 05. Breath control',
-  '',
+  'Challenge 06. First endurance test',
   '',
   '',
 ]
@@ -18,6 +18,9 @@ const intros = [
     "Obedient girls swallow only cum, but keep spit for the show.",
   "Put that mess on your face slut, you are about get nasty and degraded!",
   "When out of air, you will know what it truly means to submit like a slave.",
+  "You will be throated like a whore.",
+  "",
+  "",
   "",
   "",
 ]
@@ -65,6 +68,12 @@ const tasks = [
     "you have to hold it in your throat for 30 seconds, smack your face 3 times during this {TIMER: 30}",
   ],
   [ // 6
+    "Fuck your throat with your dildo 10 times, then hold it in for 5 seconds. Do this 3 times in a row. Take a break only to spit into the bowl",
+    "Fuck your throat with your dildo 12 times, then hold it in for 6 seconds. Do this 3 times in a row. Take a break only to spit into the bowl",
+    "Fuck your throat with your dildo 16 times, then hold it in for 8 seconds. Do this 3 times in a row. Take a break only to spit into the bowl",
+    "Fuck your throat with your dildo 18 times, then hold it in for 9 seconds. Do this 3 times in a row. Take a break only to spit into the bowl",
+    "Fuck your throat with your dildo 10 times, then hold it in for 10 seconds. Do this 3 times in a row, must keep spit in your mouth, no break",
+    "Fuck your throat with your dildo 10 times, then hold it in for 20 seconds. Do this 5 times in a row, must keep spit in your mouth, no break",
   ],
   [ // 7
   ],
@@ -78,7 +87,7 @@ const punishments = [
   {intro: "If you swallowed any spit, or it fell on the floor...", task: 5},
   {intro: "If you didn't create enough spit...", text: "swallow the dildo 30 times and repeat the challenge"},
   {intro: "If you didn't hold it in long enough...", easier: 1},
-  {},
+  {intro: "Smack your face for every break longer than 6 seconds."},
   {},
   {},
   {},

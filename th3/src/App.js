@@ -72,13 +72,14 @@ class Game extends Component {
     if (punishment) {
       return (
         <div>
-          {punishment.intro}{' '}
+          <Glyphicon glyph="alert" /> {punishment.intro}{' '}
           {this.state.showPunishment ?
             this.renderTask(punishment.text)
           :
-            <Button bsStyle="danger" bsSize="xsmall" onClick={this.handleShowPunishment}>
-              Get punishment
-            </Button>
+            punishment.text &&
+              <Button bsStyle="danger" bsSize="xsmall" onClick={this.handleShowPunishment}>
+                Get punishment
+              </Button>
           }
         </div>)
     }
