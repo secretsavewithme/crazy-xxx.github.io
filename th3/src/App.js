@@ -69,7 +69,7 @@ class Game extends Component {
   }
 
   renderPunishment(punishment) {
-    if (punishment) {
+    if (punishment && punishment.intro) {
       return (
         <div>
           <Glyphicon glyph="alert" /> {punishment.intro}{' '}

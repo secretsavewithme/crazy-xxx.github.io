@@ -1,4 +1,4 @@
-import {max, random} from 'lodash'
+import {isNumber, max, random} from 'lodash'
 
 const headers = [
   'Challenge 01. Starting it easy',
@@ -7,7 +7,7 @@ const headers = [
   'Challenge 04. Dripping mess',
   'Challenge 05. Breath control',
   'Challenge 06. First endurance test',
-  '',
+  'Challenge 07. Break time',
   '',
 ]
 
@@ -19,7 +19,7 @@ const intros = [
   "Put that mess on your face slut, you are about get nasty and degraded!",
   "When out of air, you will know what it truly means to submit like a slave.",
   "You will be throated like a whore.",
-  "",
+  "Right now you are willing to do anything else than having a dildo rape your throat.",
   "",
   "",
   "",
@@ -76,6 +76,13 @@ const tasks = [
     "Fuck your throat with your dildo 10 times, then hold it in for 20 seconds. Do this 5 times in a row, must keep spit in your mouth, no break",
   ],
   [ // 7
+    "Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. " +
+      "A little tip: imagine you're drinking with a straw",
+    "Get on your back with your neck on the border of your bed and spit it all over your face, with closed eyes",
+    "Take some spit and drool it on your open eyes with your hand",
+    "Take all that spit play with it for more than 2 minutes, get in anywhere on face, except hair",
+    "Take some spit and drool it on your open eyes with your hand, play with it 3 minutes",
+    "Take all that spit play with it for more than 5 minutes, get in anywhere on face, except hair",
   ],
   [ // 8
   ],
@@ -88,6 +95,7 @@ const punishments = [
   {intro: "If you didn't create enough spit...", text: "swallow the dildo 30 times and repeat the challenge"},
   {intro: "If you didn't hold it in long enough...", easier: 1},
   {intro: "Smack your face for every break longer than 6 seconds."},
+  {intro: "Didn't get enough time to rest? Not your fault, life is not fair. Start next challenge immediately!", ifTask: 0},
   {},
   {},
   {},
@@ -130,6 +138,9 @@ const preparePunishment = (punishment, curTasks, index) => {
     if (punishment.easier) {
       const punishmentTask = prepareTask(curTasks, max([index - 1, 0]))
       return {...punishment, text: punishmentTask.task, timer: punishmentTask.timer}
+    }
+    if (isNumber(punishment.ifTask) && punishment.ifTask !== index) {
+      return {}
     }
     return punishment
   }
