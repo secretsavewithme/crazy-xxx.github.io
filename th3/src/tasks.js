@@ -1,4 +1,4 @@
-import {min, random} from 'lodash'
+import {max, random} from 'lodash'
 
 const headers = [
   'Challenge 01. Starting it easy',
@@ -119,7 +119,7 @@ const preparePunishment = (punishment, curTasks, index) => {
       return {...punishment, text: prepareTask(curTasks, punishment.task).task}
     }
     if (punishment.easier) {
-      const punishmentTask = prepareTask(curTasks, min([index - 1, 0]))
+      const punishmentTask = prepareTask(curTasks, max([index - 1, 0]))
       return {...punishment, text: punishmentTask.task, timer: punishmentTask.timer}
     }
     return punishment

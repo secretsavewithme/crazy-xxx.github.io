@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Button, Grid, PageHeader, Panel} from 'react-bootstrap'
+import {Alert, Button, Glyphicon, Grid, PageHeader, Panel, ProgressBar} from 'react-bootstrap'
 import {isNumber} from 'lodash'
 
 import ConfigPanel from './ConfigPanel'
@@ -98,10 +98,24 @@ class Game extends Component {
 
   renderTimerOrNextButton() {
     if (isNumber(this.state.timerCountdown)) {
-      return <div>Get ready... Starting in {this.state.timerCountdown}</div>
+      return (
+        <Alert>
+          <h3>
+            Get ready...{' '}
+            <strong>
+              <Glyphicon glyph="time" /> Starting in {this.state.timerCountdown}s
+            </strong>
+          </h3>
+        </Alert>)
     }
     else if (isNumber(this.state.timer)) {
-      return <div>Hold it... {this.state.timer}</div>
+      return (
+        <Alert bsStyle={this.state.timer ? 'info' : 'success'}>
+          <h3>
+            <Glyphicon glyph="time" />Hold it... <strong>{this.state.timer}s</strong>
+          </h3>
+          <ProgressBar min={this.state.taskTimer} max={0} now={this.state.timer} bsStyle={this.state.timer ? 'default' : 'success'} />
+        </Alert>)
     }
     else if (this.state.taskTimer) {
       return <Button bsSize="large" bsStyle="warning" block onClick={this.handleStartTimer}>Start timer</Button>
