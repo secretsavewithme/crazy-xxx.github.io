@@ -10,14 +10,14 @@ const headers = [
   'Challenge 07. Break time',
   'Challenge 08. Pure throatfuck',
   'Challenge 09. Punishment without reason',
-  '',
+  'Challenge 10. A little twist',
   '',
   '',
 ]
 
 const intros = [
   "So you decided to be a throat whore today, you will get more than you expect, but you should start slowly, enjoy it.",
-  "Bored from licking and not getting full candy? Dont worry bitch, things are getting more interesting.",
+  "Bored from licking and not getting full candy? Don't worry bitch, things are getting more interesting.",
   "This challenge will provide you more spit, don't swallow it, leave it in your mouth, all dripped spit must end in the bowl from now on. " +
     "Obedient girls swallow only cum, but keep spit for the show.",
   "Put that mess on your face slut, you are about get nasty and degraded!",
@@ -26,6 +26,10 @@ const intros = [
   "Right now you are willing to do anything else than having a dildo rape your throat.",
   "Show me how good are you at the very basic discipline of blowjob. I will make a spit factory out of you.",
   "Serious throat whore must get used to getting an occasional smack.",
+  "Thought you have the hard stuff finally done? Then prepare your throat for a surprise, slut!",
+  "",
+  "",
+  "",
   "",
 ]
 
@@ -40,17 +44,17 @@ const tasks = [
   ],
   [ // 2
     'swallow it until you get tears in eyes',
-    'slowly swallow it down your throat 1 time',
-    'slowly swallow it down your throat 2 times',
+    'slowly swallow it down your throat once',
+    'slowly swallow it down your throat twice',
     'slowly swallow it down your throat 3 times',
     'quickly swallow it down your throat 3 times',
     'slowly swallow it down your throat 3 times then quickly swallow it down your throat 3 times',
   ],
   [ // 3
     'push it down your throat and leave it there for 3 seconds',
-    'push it down your throat and rotate it 360 degrees. ',
+    'push it down your throat and rotate it 360°. ',
     'push it in as fast as you can and leave it there for 10 seconds',
-    'push it in as fast as you can and rotate it 360 degrees two times',
+    'push it in as fast as you can and rotate it 360° two times',
     'push it into you throat and out as fast you can 3 times, repeat it 3 times',
     'All of it, with short breaks: {ALL}',
   ],
@@ -105,6 +109,12 @@ const tasks = [
     "Smack your face with wet dildo hard enough to feel punished 10 times + smack yourself 3 times each time in next challenge",
   ],
   [ // 10
+    "push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times.",
+    "push the dildo as far as you can, and rotate it 360° twice then fuck your throat 6 times. Do this twice in a row, pause only for spitting into the bowl ",
+    "push the dildo as far as you can, and rotate it 360° 3 times then fuck your throat 6 times. Do this 3 times in a row, pause only for spitting into the bowl ",
+    "push the dildo as far as you can, and rotate it 360° 3 times then fuck your throat 6 times. Do this 4 times in a row, pause only for spitting into the bowl ",
+    "push the dildo as far as you can, and rotate it 360° 3 times then fuck your throat 6 times. Do this 5 times in a row, pause only for spitting into the bowl ",
+    "push the dildo as far as you can, and rotate it 360° 3 times then fuck your throat 6 times. Do this 6 times in a row, pause only for spitting into the bowl ",
   ],
   [ // 11
   ],
@@ -124,6 +134,10 @@ const punishments = [
   {intro: "Didn't get enough time to rest? Not your fault, life is not fair. Start next challenge immediately!", ifTask: 0},
   {intro: "Gag yourself for every break longer than 4 seconds."},
   {intro: "If you don't feel punished enough...", task: 5},
+  {intro: "For every single break longer than 4 seconds...", text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times"},
+  {},
+  {},
+  {},
   {},
 ]
 
