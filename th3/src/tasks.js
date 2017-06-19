@@ -9,7 +9,7 @@ const headers = [
   'Challenge 06. First endurance test',
   'Challenge 07. Break time',
   'Challenge 08. Pure throatfuck',
-  '',
+  'Challenge 09. Punishment without reason',
   '',
   '',
   '',
@@ -25,7 +25,7 @@ const intros = [
   "You will be throated like a whore.",
   "Right now you are willing to do anything else than having a dildo rape your throat.",
   "Show me how good are you at the very basic discipline of blowjob. I will make a spit factory out of you.",
-  "",
+  "Serious throat whore must get used to getting an occasional smack.",
   "",
 ]
 
@@ -97,6 +97,12 @@ const tasks = [
     "Push the dildo as deep as you can and out of the mouth fast 100 times. Take a break to catch your breath, then do it again TWICE.",
   ],
   [ // 9
+    "Smack your face with wet dildo hard enough to feel punished 3 times",
+    "Smack your face with wet dildo hard enough to feel punished 4 times",
+    "Smack your face with wet dildo hard enough to feel punished 5 times",
+    "Smack your face with wet dildo hard enough to feel punished 6 times",
+    "Smack your face with wet dildo hard enough to feel punished 7 times + each time once in next challenge",
+    "Smack your face with wet dildo hard enough to feel punished 10 times + smack yourself 3 times each time in next challenge",
   ],
   [ // 10
   ],
@@ -117,7 +123,7 @@ const punishments = [
   {intro: "Smack your face for every break longer than 6 seconds."},
   {intro: "Didn't get enough time to rest? Not your fault, life is not fair. Start next challenge immediately!", ifTask: 0},
   {intro: "Gag yourself for every break longer than 4 seconds."},
-  {},
+  {intro: "If you don't feel punished enough...", task: 5},
   {},
 ]
 
