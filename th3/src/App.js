@@ -113,7 +113,7 @@ class Game extends Component {
       return (
         <Alert bsStyle={this.state.timer ? 'info' : 'success'}>
           <h3>
-            <Glyphicon glyph="time" />Hold it... <strong>{this.state.timer}s</strong>
+            <Glyphicon glyph="time" /> Hold it... <strong>{this.state.timer}s</strong>
           </h3>
           <ProgressBar min={this.state.taskTimer} max={0} now={this.state.timer} bsStyle={this.state.timer ? 'default' : 'success'} />
         </Alert>)

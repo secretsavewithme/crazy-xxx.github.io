@@ -8,6 +8,10 @@ const headers = [
   'Challenge 05. Breath control',
   'Challenge 06. First endurance test',
   'Challenge 07. Break time',
+  'Challenge 08. Pure throatfuck',
+  '',
+  '',
+  '',
   '',
 ]
 
@@ -20,7 +24,7 @@ const intros = [
   "When out of air, you will know what it truly means to submit like a slave.",
   "You will be throated like a whore.",
   "Right now you are willing to do anything else than having a dildo rape your throat.",
-  "",
+  "Show me how good are you at the very basic discipline of blowjob. I will make a spit factory out of you.",
   "",
   "",
 ]
@@ -85,6 +89,22 @@ const tasks = [
     "Take all that spit play with it for more than 5 minutes, get in anywhere on face, except hair",
   ],
   [ // 8
+    "Push the dildo as deep as you can and out of the mouth fast 30 times. Only pause to spit into the bowl, then resume immediately.",
+    "Push the dildo as deep as you can and out of the mouth fast 60 times. Only pause to spit into the bowl, then resume immediately.",
+    "Push the dildo as deep as you can and out of the mouth fast 90 times. Only pause to spit into the bowl, then resume immediately.",
+    "Push the dildo as deep as you can and out of the mouth fast 120 times. Only pause to spit into the bowl, then resume immediately.",
+    "Push the dildo as deep as you can and out of the mouth fast 100 times. Take a break to catch your breath, then do it again.",
+    "Push the dildo as deep as you can and out of the mouth fast 100 times. Take a break to catch your breath, then do it again TWICE.",
+  ],
+  [ // 9
+  ],
+  [ // 10
+  ],
+  [ // 11
+  ],
+  [ // 12
+  ],
+  [ // 13
   ],
 ]
 
@@ -96,7 +116,7 @@ const punishments = [
   {intro: "If you didn't hold it in long enough...", easier: 1},
   {intro: "Smack your face for every break longer than 6 seconds."},
   {intro: "Didn't get enough time to rest? Not your fault, life is not fair. Start next challenge immediately!", ifTask: 0},
-  {},
+  {intro: "Gag yourself for every break longer than 4 seconds."},
   {},
   {},
 ]
