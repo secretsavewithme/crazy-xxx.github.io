@@ -11,7 +11,7 @@ const headers = [
   'Challenge 08. Pure throatfuck',
   'Challenge 09. Punishment without reason',
   'Challenge 10. A little twist',
-  '',
+  'Challenge 11. Improving yourself',
   '',
 ]
 
@@ -27,7 +27,7 @@ const intros = [
   "Show me how good are you at the very basic discipline of blowjob. I will make a spit factory out of you.",
   "Serious throat whore must get used to getting an occasional smack.",
   "Thought you have the hard stuff finally done? Then prepare your throat for a surprise, slut!",
-  "",
+  "Be a good girl and take one minute rest, breathe slowly.",
   "",
   "",
   "",
@@ -117,6 +117,12 @@ const tasks = [
     "push the dildo as far as you can, and rotate it 360° 3 times then fuck your throat 6 times. Do this 6 times in a row, pause only for spitting into the bowl ",
   ],
   [ // 11
+    "push dildo as far as you can, leave it there for {INTROTIMER: 18} seconds",
+    "push dildo as far as you can, leave it there for {INTROTIMER: 15} seconds",
+    "push dildo as far as you can, leave it there for {INTROTIMER: 12} seconds",
+    "push dildo as far as you can, leave it there for {INTROTIMER: 9} seconds",
+    "push dildo as far as you can, leave it there for {INTROTIMER: 6} seconds",
+    "push dildo as far as you can, leave it there for {INTROTIMER: 3} seconds",
   ],
   [ // 12
   ],
@@ -135,7 +141,7 @@ const punishments = [
   {intro: "Gag yourself for every break longer than 4 seconds."},
   {intro: "If you don't feel punished enough...", task: 5},
   {intro: "For every single break longer than 4 seconds...", text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times"},
-  {},
+  {intro: "If you stop too soon, for every second missing...", text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times"},
   {},
   {},
   {},
@@ -163,12 +169,22 @@ const extractTimer = (mightContainTimer) => {
   return {task, timer}
 }
 
+const extractIntroTimer = ({task: mightContainIntroTimer, timer}) => {
+  let introTimer
+  const task = mightContainIntroTimer.replace(/{INTROTIMER: (\d+)}/, (_, num) => {
+    introTimer = +num
+    return '??'
+  })
+  return {task, introTimer, timer}
+}
+
 const prependIndex = (task, index) => `[${index + 1}] ${task}`
 
 const prepareTask = (curTasks, index) =>
-  extractTimer(
-    prependIndex(
-      withAllAppended(curTasks[index], curTasks), index))
+  extractIntroTimer(
+    extractTimer(
+      prependIndex(
+        withAllAppended(curTasks[index], curTasks), index)))
 
 const preparePunishment = (punishment, curTasks, index) => {
   if (punishment) {

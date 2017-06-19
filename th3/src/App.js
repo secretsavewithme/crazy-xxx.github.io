@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Alert, Button, Glyphicon, Grid, PageHeader, Panel, ProgressBar} from 'react-bootstrap'
-import {isNumber} from 'lodash'
+import {isNumber, max} from 'lodash'
 
 import ConfigPanel from './ConfigPanel'
 import nextTask from './tasks'
@@ -19,27 +19,37 @@ class Game extends Component {
   }
 
   timerCallback = () => {
-    if (this.state.timerCountdown) {
-      this.setState({timerCountdown: this.state.timerCountdown - 1})
+    const {introTimerStarted, stopCallback, taskTimer, timer, timerCountdown, timerInterval} = this.state
+    if (timerCountdown) {
+      this.setState({timerCountdown: timerCountdown - 1})
     }
-    else if (0 === this.state.timerCountdown) {
-      this.setState({timerCountdown: null, timer: this.state.taskTimer})
+    else if (0 === timerCountdown) {
+      this.setState({timerCountdown: null, timer: taskTimer})
     }
-    else if (0 === this.state.timer) {
-      clearInterval(this.state.timerInterval)
+    else if (stopCallback) {
+      clearInterval(timerInterval)
+      this.setState({timerInterval: null, stopCallback: null})
+    }
+    else if (0 === timer) {
+      clearInterval(timerInterval)
       this.setState({timer: null, taskTimer: null, timerInterval: null})
     }
+    else if (isNumber(introTimerStarted)) {
+      this.setState({introTimerStarted: introTimerStarted + 1})
+    }
     else {
-      this.setState({timer: this.state.timer - 1})
+      this.setState({timer: timer - 1})
     }
   }
 
   handleNextTask = () => {
     const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
+    // const task = nextTask(10, this.props.difficulty)
     this.setState({
       tasks: [task].concat(this.state.tasks),
       showPunishment: false,
-      taskTimer: task.timer})
+      taskTimer: task.timer,
+      introTimer: task.introTimer})
   }
 
   handleStartTimer = () => {
@@ -50,6 +60,19 @@ class Game extends Component {
   handleShowPunishment = () => {
     const {punishment} = this.state.tasks[0]
     this.setState({showPunishment: true, taskTimer: punishment && punishment.timer})
+  }
+
+  handleStartIntroTimer = () => {
+    const timerInterval = setInterval(this.timerCallback, 1000)
+    this.setState({introTimerStarted: 0, timerInterval})
+  }
+
+  handleStopIntroTimer = () => {
+    const taskTimer = max([this.state.introTimerStarted - this.state.introTimer, 5])
+    const [first, ...rest] = this.state.tasks
+    const replaced = first.task.replace('??', taskTimer)
+    const tasks = [{...first, task: replaced}].concat(rest)
+    this.setState({taskTimer, tasks, introTimerStarted: null, introTimer: null, stopCallback: true})
   }
 
   renderTask(task) {
@@ -116,6 +139,19 @@ class Game extends Component {
             <Glyphicon glyph="time" /> Hold it... <strong>{this.state.timer}s</strong>
           </h3>
           <ProgressBar min={this.state.taskTimer} max={0} now={this.state.timer} bsStyle={this.state.timer ? 'default' : 'success'} />
+        </Alert>)
+    }
+    else if (isNumber(this.state.introTimer)) {
+      return (
+        <Alert bsStyle="warning">
+          <h3>This task requires you to measure how long you can hold your breath.</h3>
+          Start the timer, then hold your breath as long as you can. Afterwards, click the button again to stop the timer.
+          {isNumber(this.state.introTimerStarted) ?
+            <Button bsSize="large" bsStyle="danger" block onClick={this.handleStopIntroTimer}>
+              <Glyphicon glyph="time" /> Holding it for <strong>{this.state.introTimerStarted}s</strong>... STOP!
+            </Button>
+            :
+            <Button bsSize="large" bsStyle="warning" block onClick={this.handleStartIntroTimer}>Start timer when ready</Button>}
         </Alert>)
     }
     else if (this.state.taskTimer) {
