@@ -12,6 +12,10 @@ const headers = [
   'Challenge 09. Punishment without reason',
   'Challenge 10. A little twist',
   'Challenge 11. Improving yourself',
+  'Challenge 12. Nasty Whore',
+  '',
+  '',
+  '',
   '',
 ]
 
@@ -28,7 +32,8 @@ const intros = [
   "Serious throat whore must get used to getting an occasional smack.",
   "Thought you have the hard stuff finally done? Then prepare your throat for a surprise, slut!",
   "Be a good girl and take one minute rest, breathe slowly.",
-  "",
+  "I will let you play with the spit once more, because I like how nasty throat whore you are. However, get 5 or 6 on dice and you will have to " +
+    "prove that you are as nasty as I expect you to be.",
   "",
   "",
 ]
@@ -125,6 +130,15 @@ const tasks = [
     "push dildo as far as you can, leave it there for {INTROTIMER: 3} seconds",
   ],
   [ // 12
+    "Sit down, drool the spit and try to take it back to your mouth without using your hands. A little tip: imagine you're drinking with a straw",
+    "Get on your back with your neck on the border of your bed, drool the spit and try to take it back to your mouth without using your hands. " +
+      "A little tip: imagine you're drinking with a straw",
+    "Get on your back with your neck on the border of your bed, and spit it all over your face, with closed eyes",
+    "Get on your back with your neck on the border of your bed, and spit it all over your face, with wide open eyes. " +
+      "Make sure to get some spit into your eyes, play with it 2 minutes",
+    "Snore all the spit from bowl, half with one nostril, other half with other nostril",
+    "Get on your back with your neck on the border of your bed, get all the spit deep in your mouth and push it out through your nose on your face " +
+      "(exhale through nose, air will push it out through nostrils)",
   ],
   [ // 13
   ],
@@ -135,14 +149,25 @@ const punishments = [
   null,
   {intro: "If you swallowed any spit, or it fell on the floor...", task: 5},
   {intro: "If you didn't create enough spit...", text: "swallow the dildo 30 times and repeat the challenge"},
-  {intro: "If you didn't hold it in long enough...", easier: 1},
+  {intro: "If you couldn't hold it in long enough...", easier: 1},
   {intro: "Smack your face for every break longer than 6 seconds."},
   {intro: "Didn't get enough time to rest? Not your fault, life is not fair. Start next challenge immediately!", ifTask: 0},
   {intro: "Gag yourself for every break longer than 4 seconds."},
   {intro: "If you don't feel punished enough...", task: 5},
-  {intro: "For every single break longer than 4 seconds...", text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times"},
-  {intro: "If you stop too soon, for every second missing...", text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times"},
-  {},
+  {
+    intro: "For every single break longer than 4 seconds...",
+    text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times",
+  },
+  {
+    intro: "If you stop too soon, for every second missing...",
+    text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times",
+  },
+  {
+    intro: "Couldn't do 5 or 6?",
+    text: "Get on your back with your neck on the border of your bed then gag yourself until you puke on your face! " +
+            "(close your eyes, vomit might be dangerous to them!)",
+    ifTaskGtE: 4,
+  },
   {},
   {},
 ]
@@ -196,6 +221,9 @@ const preparePunishment = (punishment, curTasks, index) => {
       return {...punishment, text: punishmentTask.task, timer: punishmentTask.timer}
     }
     if (isNumber(punishment.ifTask) && punishment.ifTask !== index) {
+      return {}
+    }
+    if (isNumber(punishment.ifTaskGtE) && punishment.ifTaskGtE > index) {
       return {}
     }
     return punishment
