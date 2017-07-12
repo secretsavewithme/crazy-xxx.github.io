@@ -1,4 +1,4 @@
-import {isNumber, max, random} from 'lodash'
+import {compact, isNumber, max, random} from 'lodash'
 
 const headers = [
   'Challenge 01. Starting it easy',
@@ -14,7 +14,7 @@ const headers = [
   'Challenge 11. Improving yourself',
   'Challenge 12. Nasty whore',
   'Challenge 13. Mixed technique',
-  '',
+  'Challenge 14. Repeat',
   '',
   '',
 ]
@@ -35,6 +35,8 @@ const intros = [
   "I will let you play with the spit once more, because I like how nasty throat whore you are. However, get 5 or 6 on dice and you will have to " +
     "prove that you are as nasty as I expect you to be.",
   "Get ready to do anything and everything! You'll get 5 tasks (or more, if unlucky!) Put your head on side of bed.",
+  "Let's go back and repeat one of the challenges.",
+  "",
   "",
 ]
 
@@ -184,13 +186,14 @@ const punishments = [
 ]
 
 const randIndex = (difficulty) => {
-  if ('lite' === difficulty) {
-    return random(4)
+  switch (difficulty) {
+    case 'lite': return random(4)
+    case '123': return random(2)
+    case '45': return random(3, 4)
+    default:
   }
-  else {
-    const r = random(5) + difficulty
-    return r < 0 ? 0 : r > 5 ? 5 : r
-  }
+  const r = random(5) + difficulty
+  return r < 0 ? 0 : r > 5 ? 5 : r
 }
 
 const withAllAppended = (task, curTasks) =>
@@ -267,13 +270,46 @@ const prepareTask12 = (difficulty) => {
   return {task: arr.join("\n")}
 }
 
+const combineTasks = (taskList) => {
+  if (taskList.length === 1) {
+    return taskList[0]
+  }
+  else {
+    return {
+      task: "Do all:\n" + taskList.map(task => task.task).join("\n"),
+      timer: compact(taskList.map(task => task.timer))[0],
+    }
+  }
+}
+
+const taskIndex = (index) =>
+  (index === 1 || index === 3 ? 12 - random(1, 6) - random(1, 6) : 12 - random(1, 6))
+
+const prepareTask13 = (difficulty, nextTask) => {
+  const index = randIndex(difficulty)
+  const indices = [taskIndex(index)]
+  if (indices[0] === 3 || indices[0] === 11) {
+    let newIndex
+    do {
+      newIndex = taskIndex(index)
+    } while (newIndex === 3 || newIndex === 11)
+    indices.unshift(newIndex)
+  }
+  if (index > 3) {
+    indices.push(12 - random(1, 6) - random(1, 6))
+  }
+  return combineTasks(indices.map(i => nextTask(i, index % 2 === 0 ? '123' : '45')))
+}
+
 const nextTask = (num, difficulty) => {
   const index = randIndex(difficulty)
-  const task = num === 12 ? prepareTask12(difficulty) : prepareTask(tasks[num], index)
+  const task =
+    num === 13 ? prepareTask13(difficulty, nextTask) :
+    num === 12 ? prepareTask12(difficulty) : prepareTask(tasks[num], index)
   return {
+    ...task,
     header: headers[num],
     intro: intros[num],
-    ...task,
     punishment: preparePunishment(punishments[num], tasks[num], index),
   }
 }
