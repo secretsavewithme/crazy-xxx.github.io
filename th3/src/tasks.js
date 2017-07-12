@@ -12,8 +12,8 @@ const headers = [
   'Challenge 09. Punishment without reason',
   'Challenge 10. A little twist',
   'Challenge 11. Improving yourself',
-  'Challenge 12. Nasty Whore',
-  '',
+  'Challenge 12. Nasty whore',
+  'Challenge 13. Mixed technique',
   '',
   '',
   '',
@@ -34,7 +34,7 @@ const intros = [
   "Be a good girl and take one minute rest, breathe slowly.",
   "I will let you play with the spit once more, because I like how nasty throat whore you are. However, get 5 or 6 on dice and you will have to " +
     "prove that you are as nasty as I expect you to be.",
-  "",
+  "Get ready to do anything and everything! You'll get 5 tasks (or more, if unlucky!) Put your head on side of bed.",
   "",
 ]
 
@@ -141,6 +141,17 @@ const tasks = [
       "(exhale through nose, air will push it out through nostrils)",
   ],
   [ // 13
+    "Hold dildo in throat for 20 seconds, keep spit in mouth.",
+    "Deepthroat dildo 20 times, keep spit in mouth.",
+    "Rotate dildo 2 times then hold 10 seconds in, keep spit in mouth.",
+    "Spit on your face",
+    "Rotate dildo 3 times",
+  ],
+  [ // 14
+  ],
+  [ // 15
+  ],
+  [ // 16
   ],
 ]
 
@@ -163,7 +174,7 @@ const punishments = [
     text: "repeat this: push the dildo as far as you can, and rotate it 360° once then fuck your throat 6 times",
   },
   {
-    intro: "Couldn't do 5 or 6?",
+    intro: "Couldn't do it?",
     text: "Get on your back with your neck on the border of your bed then gag yourself until you puke on your face! " +
             "(close your eyes, vomit might be dangerous to them!)",
     ifTaskGtE: 4,
@@ -230,12 +241,39 @@ const preparePunishment = (punishment, curTasks, index) => {
   }
 }
 
+const prepareTask12 = (difficulty) => {
+  const diff = difficulty === +6 ? 2 : difficulty
+  let maxLen = difficulty === +6 ? 10 : 5
+  const arr = ['']
+  let spitCount = 0
+  while (arr.length <= maxLen) {
+    const index = randIndex(diff)
+    if (index === 5) {
+      if (maxLen < 10) {
+        maxLen += 1
+      }
+    }
+    else {
+      arr.push(tasks[12][index])
+      if (index === 3 && maxLen < 10) {
+        spitCount += 1
+        if (spitCount === 3) {
+          maxLen += 5
+          spitCount = 0
+        }
+      }
+    }
+  }
+  return {task: arr.join("\n")}
+}
+
 const nextTask = (num, difficulty) => {
   const index = randIndex(difficulty)
+  const task = num === 12 ? prepareTask12(difficulty) : prepareTask(tasks[num], index)
   return {
     header: headers[num],
     intro: intros[num],
-    ...prepareTask(tasks[num], index),
+    ...task,
     punishment: preparePunishment(punishments[num], tasks[num], index),
   }
 }

@@ -8,7 +8,7 @@ import nextTask from './tasks'
 
 class Game extends Component {
   static propTypes = {
-    difficulty: PropTypes.number.isRequired,
+    difficulty: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   }
 
   state = {
@@ -44,7 +44,7 @@ class Game extends Component {
 
   handleNextTask = () => {
     const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
-    // const task = nextTask(10, this.props.difficulty)
+    // const task = nextTask(12, this.props.difficulty)
     this.setState({
       tasks: [task].concat(this.state.tasks),
       showPunishment: false,
@@ -85,7 +85,7 @@ class Game extends Component {
         <div>
           {tasks[0]}
           <ul>
-            {tasks.slice(1).map(t => <li key={t}>{t}</li>)}
+            {tasks.slice(1).map((t, i) => <li key={i}>{t}</li>)}
           </ul>
         </div>)
     }
