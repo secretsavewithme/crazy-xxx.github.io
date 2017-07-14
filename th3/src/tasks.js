@@ -15,8 +15,7 @@ const headers = [
   'Challenge 12. Nasty whore',
   'Challenge 13. Mixed technique',
   'Challenge 14. Repeat',
-  '',
-  '',
+  'Challenge 15. Close to end',
 ]
 
 const intros = [
@@ -36,8 +35,7 @@ const intros = [
     "prove that you are as nasty as I expect you to be.",
   "Get ready to do anything and everything! You'll get 5 tasks (or more, if unlucky!) Put your head on side of bed.",
   "Let's go back and repeat one of the challenges.",
-  "",
-  "",
+  "How can whore get nasty and messy, if she is not clean in the first place?",
 ]
 
 const tasks = [
@@ -152,6 +150,13 @@ const tasks = [
   [ // 14
   ],
   [ // 15
+    "Clean yourself PERFECTLY! (eyes especially) from all the mess, and tidy it up! Only then you are allowed to cum.",
+    "Clean yourself PERFECTLY! (eyes especially) from all the mess, and tidy it up! Only then you are allowed to cum.",
+    "Clean yourself PERFECTLY! (eyes especially) from all the mess, and tidy it up! Only then you are allowed to cum.",
+    "Nastiest whore, spread all the mess all over your face and body while dildo in your mouth! Then pour all spit from mouth into " +
+      "your pussy/on your dick, put on your panties and CLEAN YOUR EYES PERFECTLY AND FOREHEAD, leave all spit bellow your nose. Feel how " +
+      "nasty you are for 3 hours. Only then clean yourself perfectly from all the mess, and tidy it up! Only then you are allowed to cum.",
+
   ],
   [ // 16
   ],
@@ -301,11 +306,36 @@ const prepareTask13 = (difficulty, nextTask) => {
   return combineTasks(indices.map(i => nextTask(i, index % 2 === 0 ? '123' : '45')))
 }
 
+const prepareTask14 = (difficulty) => {
+  const index = randIndex(difficulty)
+  let task
+  let index2
+  switch (index) {
+    case 5:
+      task = `Do all:${prepareTask12(difficulty).task}\n${prepareTask12(difficulty).task}`
+      index2 = randIndex(difficulty)
+      if (index2 >= 4) index2 = 3
+      task += "\n" + tasks[14][index2]
+      break
+    case 4:
+      task = "Do all:" + prepareTask12(difficulty).task
+      index2 = randIndex(difficulty)
+      if (index2 >= 4) index2 = 0
+      task += "\n" + tasks[14][index2]
+      break
+    default:
+      task = tasks[14][index]
+  }
+  return {task}
+}
+
 const nextTask = (num, difficulty) => {
   const index = randIndex(difficulty)
   const task =
+    num === 14 ? prepareTask14(difficulty) :
     num === 13 ? prepareTask13(difficulty, nextTask) :
-    num === 12 ? prepareTask12(difficulty) : prepareTask(tasks[num], index)
+    num === 12 ? prepareTask12(difficulty) :
+                 prepareTask(tasks[num], index)
   return {
     ...task,
     header: headers[num],

@@ -44,7 +44,7 @@ class Game extends Component {
 
   handleNextTask = () => {
     const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
-    // const task = nextTask(13, this.props.difficulty)
+    // const task = nextTask(14, this.props.difficulty)
     this.setState({
       tasks: [task].concat(this.state.tasks),
       showPunishment: false,
