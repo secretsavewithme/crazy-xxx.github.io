@@ -9,6 +9,7 @@ import nextTask from './tasks'
 class Game extends Component {
   static propTypes = {
     difficulty: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    onRestartGame: PropTypes.func.isRequired,
   }
 
   state = {
@@ -43,13 +44,18 @@ class Game extends Component {
   }
 
   handleNextTask = () => {
-    const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
-    // const task = nextTask(14, this.props.difficulty)
-    this.setState({
-      tasks: [task].concat(this.state.tasks),
-      showPunishment: false,
-      taskTimer: task.timer,
-      introTimer: task.introTimer})
+    if (this.state.tasks.length < 16) {
+      const task = nextTask(this.state.tasks.length - 1, this.props.difficulty)
+      // const task = nextTask(14, this.props.difficulty)
+      this.setState({
+        tasks: [task].concat(this.state.tasks),
+        showPunishment: false,
+        taskTimer: task.timer,
+        introTimer: task.introTimer})
+    }
+    else {
+      this.setState({finished: true})
+    }
   }
 
   handleStartTimer = () => {
@@ -68,7 +74,8 @@ class Game extends Component {
   }
 
   handleStopIntroTimer = () => {
-    const taskTimer = max([this.state.introTimerStarted - this.state.introTimer, 5])
+    const minTime = ((+this.props.difficulty || 0) + 3) * 5
+    const taskTimer = max([this.state.introTimerStarted - this.state.introTimer, minTime])
     const [first, ...rest] = this.state.tasks
     const replaced = first.task.replace('??', taskTimer)
     const tasks = [{...first, task: replaced}].concat(rest)
@@ -157,6 +164,13 @@ class Game extends Component {
     else if (this.state.taskTimer) {
       return <Button bsSize="large" bsStyle="warning" block onClick={this.handleStartTimer}>Start timer</Button>
     }
+    else if (this.state.finished) {
+      return (
+        <Alert bsStyle="success">
+          <h3>Finished! Congratulations!</h3>
+          <Button bsSize="large" bsStyle="success" onClick={this.props.onRestartGame}>Start another game</Button>
+        </Alert>)
+    }
     else {
       return <Button bsSize="large" block onClick={this.handleNextTask}>Next challenge</Button>
     }
@@ -183,7 +197,7 @@ class App extends Component {
       <Grid>
         <PageHeader>Throat Heaven 3</PageHeader>
         {this.state.started ?
-          <Game difficulty={this.state.difficulty} /> :
+          <Game difficulty={this.state.difficulty} onRestartGame={() => this.setState({started: false})} /> :
           <ConfigPanel
             difficulty={this.state.difficulty}
             handleStart={() => this.setState({started: true})}
