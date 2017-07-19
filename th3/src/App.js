@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Alert, Button, Glyphicon, Grid, PageHeader, Panel, ProgressBar} from 'react-bootstrap'
+import {Alert, Button, Glyphicon, Grid, Nav, Navbar, NavItem, Panel, ProgressBar} from 'react-bootstrap'
 import {isNumber, max} from 'lodash'
 
 import ConfigPanel from './ConfigPanel'
@@ -194,16 +194,39 @@ class App extends Component {
 
   render() {
     return (
-      <Grid>
-        <PageHeader>Throat Heaven 3a</PageHeader>
-        {this.state.started ?
-          <Game difficulty={this.state.difficulty} onRestartGame={() => this.setState({started: false})} /> :
-          <ConfigPanel
-            difficulty={this.state.difficulty}
-            handleStart={() => this.setState({started: true})}
-            handleSetDifficulty={(difficulty) => this.setState({difficulty})}
-          />}
-      </Grid>
+      <div>
+        <Navbar>
+          <Navbar.Header>
+            <Navbar.Brand>
+              Throat Heaven 3
+            </Navbar.Brand>
+          </Navbar.Header>
+          <Nav pullRight>
+            {this.state.started &&
+              <NavItem>
+                <Button bsSize="xsmall" bsStyle="danger" onClick={() => this.setState({started: false})}>
+                  <Glyphicon glyph="refresh" /> Restart
+                </Button>
+              </NavItem>}
+          </Nav>
+        </Navbar>
+        <Grid>
+          {this.state.started ?
+            <Game difficulty={this.state.difficulty} onRestartGame={() => this.setState({started: false})} /> :
+            <ConfigPanel
+              difficulty={this.state.difficulty}
+              handleStart={() => this.setState({started: true})}
+              handleSetDifficulty={(difficulty) => this.setState({difficulty})}
+            />}
+        </Grid>
+        <Navbar fixedBottom>
+          <Navbar.Text pullRight>
+            Based on the original {' '}
+            <a href="http://www.getdare.com/bbs/showthread.php?t=274819" target="_blank" rel="noopener noreferrer">Throat Heaven 3 dare</a>{' '}
+            with minimal modifications.&nbsp;&nbsp;&nbsp;&nbsp;
+          </Navbar.Text>
+        </Navbar>
+      </div>
     )
   }
 }
@@ -214,13 +237,3 @@ export default App
 
 // http://react-bootstrap.github.io/components.html
 
-        // <Navbar inverse fixedTop>
-        //   <Grid>
-        //     <Navbar.Header>
-        //       <Navbar.Brand>
-        //         <a href="/">TH3</a>
-        //       </Navbar.Brand>
-        //       <Navbar.Toggle />
-        //     </Navbar.Header>
-        //   </Grid>
-        // </Navbar>
