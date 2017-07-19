@@ -226,7 +226,7 @@ class App extends Component {
           <Navbar.Text pullRight>
             Based on the original {' '}
             <a href="http://www.getdare.com/bbs/showthread.php?t=274819" target="_blank" rel="noopener noreferrer">Throat Heaven 3 dare</a>{' '}
-            with minimal modifications.&nbsp;&nbsp;&nbsp;&nbsp;
+            with small modifications.&nbsp;&nbsp;&nbsp;&nbsp;
           </Navbar.Text>
         </Navbar>
       </div>
