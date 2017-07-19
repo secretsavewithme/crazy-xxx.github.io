@@ -168,7 +168,7 @@ class Game extends Component {
       return (
         <Alert bsStyle="success">
           <h3>Finished! Congratulations!</h3>
-          <Button bsSize="large" bsStyle="success" onClick={this.props.onRestartGame}>Start another game</Button>
+          <Button bsSize="large" bsStyle="success" block onClick={this.props.onRestartGame}>Start another game</Button>
         </Alert>)
     }
     else {
@@ -200,15 +200,18 @@ class App extends Component {
             <Navbar.Brand>
               Throat Heaven 3
             </Navbar.Brand>
+            {this.state.started && <Navbar.Toggle />}
           </Navbar.Header>
-          <Nav pullRight>
-            {this.state.started &&
-              <NavItem>
-                <Button bsSize="xsmall" bsStyle="danger" onClick={() => this.setState({started: false})}>
-                  <Glyphicon glyph="refresh" /> Restart
-                </Button>
-              </NavItem>}
-          </Nav>
+          {this.state.started &&
+            <Navbar.Collapse>
+              <Nav pullRight>
+                <NavItem>
+                  <Button bsSize="xsmall" bsStyle="danger" onClick={() => this.setState({started: false})}>
+                    <Glyphicon glyph="refresh" /> Restart
+                  </Button>
+                </NavItem>
+              </Nav>
+            </Navbar.Collapse>}
         </Navbar>
         <Grid>
           {this.state.started ?
