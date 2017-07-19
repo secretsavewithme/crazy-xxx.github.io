@@ -195,7 +195,7 @@ class App extends Component {
   render() {
     return (
       <Grid>
-        <PageHeader>Throat Heaven 3</PageHeader>
+        <PageHeader>Throat Heaven 3a</PageHeader>
         {this.state.started ?
           <Game difficulty={this.state.difficulty} onRestartGame={() => this.setState({started: false})} /> :
           <ConfigPanel
