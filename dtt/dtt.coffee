@@ -14,7 +14,7 @@ make = (prop, val) ->
 dup = (state, objs...) ->
   _.assign({}, state, objs...)
 
-trainerLogic = Redux.combineReducers({gameParams, game})
+trainerLogic = Redux.combineReducers({gameParams, game, customize})
 
 store = Redux.createStore(trainerLogic)
 

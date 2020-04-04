@@ -30,6 +30,10 @@ StartSelector = React.createClass
   handleChange: (e) ->
     store.dispatch(type: 'changeVal', prop: @props.type, val: e.target.value)
 
+  handleCustomize: (e) ->
+    e.preventDefault()
+    store.dispatch(type: 'customize')
+
   startGame: (e) ->
     e.preventDefault()
     store.dispatch(type: 'startGame') unless @props.error
@@ -62,6 +66,11 @@ StartSelector = React.createClass
             label {},
               (input type: 'checkbox', checked: @props.tellTime, onChange: -> store.dispatch(type: 'toggleTellTime')),
               ' Include task duration  '
+
+        # br {}
+        # div className: "form-group",
+        #   label({}, 'Custom tasks: '),
+        #   input type: 'url', className: "form-control"
 
         br {}
         button type: "submit", className: "btn btn-primary btn-lg", disabled: @props.error, 'Start training'
