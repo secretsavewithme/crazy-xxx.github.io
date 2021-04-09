@@ -91,7 +91,7 @@ ConfigForm = React.createClass({
       type: "submit",
       className: "btn btn-primary btn-lg",
       disabled: this.props.error
-    }, 'Start training')));
+    }, 'Start training2')));
   },
   numberOfPairsChanged: function(e) {
     return store.dispatch({
